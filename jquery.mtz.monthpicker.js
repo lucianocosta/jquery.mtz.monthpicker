@@ -83,8 +83,15 @@
       }
       
       function selectYear(){
+        var y = inputData().year ? inputData().year : $.monthpicker.year
         $('#mtz-monthpicker-year option:selected').removeAttr('selected')
-        $('#mtz-monthpicker-year').find("option[value="+ $.monthpicker.year +']').attr('selected','selected')
+        $('#mtz-monthpicker-year').find("option[value="+ y +']').attr('selected','selected')
+      }
+      
+      function inputData(){
+        var data = _element.val().split('/')
+        if(data && data.length===2) return {'month':data[0], 'year':data[1]}
+        return {'month':null, 'year':null}
       }
 
       function mountMonthsTable(){
