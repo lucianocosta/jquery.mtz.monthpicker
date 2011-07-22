@@ -50,118 +50,121 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 (function ($){
-	
-  function Monthpicker(pattern){
-    
-    if (!pattern || !pattern.match){
-      pattern = 'mm/yyyy'
-    }
 
+  function Monthpicker(settings){
     var
 			_element = null,
-      _left = 0,
-      _right = 0,
-      _top = 0,
-      _bottom = 0,
-		  _monthNamesShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       _container = $('<div id="" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div>').css({
         position:'absolute',
         zIndex:999999,
         whiteSpace:'no-wrap',
-        top:'0px',
-        left:'0px',
         width:'250px',
         overflow:'hidden',
         textAlign:'center'
       }),
-      _header = $('<div class="ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all monttez-monthpicker"></div>'),
-      _table = $('<table class="monttez-monthpicker"></table>'),
+      _header = $('<div class="ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all mtz-monthpicker" />'),
+      _table = $('<table class="mtz-monthpicker" />'),
       initialized = false,
-			year = (new Date()).getFullYear()
+			year = settings.year
 
       function mountYearsCombo(){
-        var combo = $('<select class="monttez-monthpicker"></select>')
-				combo.bind('change', function () {
-					$.monthpicker.year = $(this).children(':selected').val()
-				})
-        for(var i=(year-10); i<=(year+10); i++){
-          combo.append('<option class="monttez-monthpicker" value="'+ i +'">' + i + '</option>')
+        var 
+          combo = $('<select id="mtz-monthpicker-year" class="mtz-monthpicker" />'),
+          option = null
+        combo.bind('change', function () {
+          $.monthpicker.year = $(this).children(':selected').val()
+        })
+        for(var i=$.monthpicker.year-10; i<=$.monthpicker.year+10; i++){
+          option = $('<option class="mtz-monthpicker" />').attr('value',i).append(i)
+          combo.append(option)
         }
+        selectYear()
         _header.append(combo)
+      }
+      
+      function selectYear(){
+        $('#mtz-monthpicker-year option:selected').removeAttr('selected')
+        $('#mtz-monthpicker-year').find("option[value="+ $.monthpicker.year +']').attr('selected','selected')
       }
 
       function mountMonthsTable(){
         var 
-          tbody = $('<tbody class="monttez-monthpicker"></tbody>').appendTo(_table),
-          tr = $('<tr class="monttez-monthpicker"></tr>'),
+          tbody = $('<tbody class="mtz-monthpicker" />').appendTo(_table),
+          tr = $('<tr class="mtz-monthpicker" />'),
           td = ''
         for(var i=1; i<=12; i++){
-          td = $('<td class="monttez-monthpicker" data-month="'+i+'"></td>')
-					td.append('<a class="ui-state-default monttez-monthpicker" style="text-align:center" href="#">' + _monthNamesShort[i-1] + '</a>')
+          td = $('<td class="ui-state-default mtz-monthpicker" style="padding:5px;cursor:default;" />').attr('data-month',i)
+					td.append(settings.monthNames[i-1])
 					td.bind('click', function () {
 						_element.val( formatedValue( $(this).attr('data-month')) )
-          	$.monthpicker.initialized = false
           	$.monthpicker.hide()				
 					})
           tr.append(td).appendTo(tbody)
-          if(i%3==0) tr = $('<tr class="monttez-monthpicker"></tr>')
+          if(i%3===0) tr = $('<tr class="mtz-monthpicker" />')
         }
       }
 
-			function formatedValue(month){
-				if(pattern.indexOf('mm') >=0 && month < 10)
-				  month = '0' + month
-				return month + '/' + $.monthpicker.year
-			}
+      function formatedValue(month){
+      	if(settings.pattern.indexOf('mm') >=0 && month < 10) month = '0' + month
+      	return month + '/' + $.monthpicker.year
+      }
 
       this.show = function (){
+        if(!$.monthpicker.initialized){
+          $.monthpicker.year = year
+          mountYearsCombo()
+          mountMonthsTable()
+          _container.append(_header)
+          _container.append(_table)          
+        }
+        selectYear()
         _container.appendTo('body').css({
           display:'block'
         })
+        $.monthpicker.initialized = true
       }
 
       this.hide = function (){
         _container.css({display:'none'})
       }
 
-      this.setElement = function (el){
+      this.applyTo = function (el){
 				_element = el
-        _top = el.offset().top
-        _bottom = el.offset().top + el.outerHeight()
-        _left = el.offset().left
-        _right = el.offset().left + el.outerWidth()
         _container.css({
-          top: _bottom,
-          left: _left
+          top: el.offset().top + el.outerHeight(),
+          left: el.offset().left
         })
       }
 
-      mountYearsCombo()
-      mountMonthsTable()
-      _container.append(_header)
-      _container.append(_table)
-
   }
 
-  $.fn.monthpicker = function (){
-    $(this).live({
+  $.fn.monthpicker = function (options){
+    var
+      settings = {
+  		  pattern: 'mm/yyyy',
+  		  monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  		  year: (new Date()).getFullYear()
+  		}
+		
+		if(options){ 
+      $.extend(settings, options)
+    }
+		
+    $.monthpicker = new Monthpicker(settings)
+
+    this.live({
       click: function (el){
-        $.monthpicker.setElement($(this))
+        $.monthpicker.applyTo($(this))
         $.monthpicker.show()
-        $.monthpicker.initialized = true
-        $(document).mousedown(function (el2){
-	      	if(!el2.target.className || el2.target.className.indexOf('monttez-monthpicker') < 0){
-          	$.monthpicker.initialized = false
-          	$.monthpicker.hide()				
+        $(document).mousedown(function (e){
+	      	if(!e.target.className || e.target.className.indexOf('mtz-monthpicker') < 0){
+	      	  $.monthpicker.hide()				
 					}
         })
       }
     })
+    
+    return this
   }
-
-  $.monthpicker = new Monthpicker('')
-  $.monthpicker.initialized = false
-  $.monthpicker.initializede = 'falsed'
-  $.monthpicker.year = (new Date()).getFullYear()
 
 })(jQuery)
