@@ -54,7 +54,7 @@
   function Monthpicker(settings){
     var
 			_element = null,
-      _container = $('<div id="" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div>').css({
+      _container = $('<div id="mtz-monthpicker" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" />').css({
         position:'absolute',
         zIndex:999999,
         whiteSpace:'no-wrap',
@@ -85,7 +85,7 @@
       function selectYear(){
         var y = inputData().year ? inputData().year : $.monthpicker.year
         $('#mtz-monthpicker-year option:selected').removeAttr('selected')
-        $('#mtz-monthpicker-year').find("option[value="+ y +']').attr('selected','selected')
+        $('#mtz-monthpicker-year').find('option[value='+ y +']').attr('selected','selected')
       }
       
       function inputData(){
