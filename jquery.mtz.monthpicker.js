@@ -76,6 +76,8 @@
         })
         for(var i=$.monthpicker.year-10; i<=$.monthpicker.year+10; i++){
           option = $('<option class="mtz-monthpicker" />').attr('value',i).append(i)
+          if($.monthpicker.year == i)
+            option.attr('selected', 'selected')
           combo.append(option)
         }
         selectYear()
