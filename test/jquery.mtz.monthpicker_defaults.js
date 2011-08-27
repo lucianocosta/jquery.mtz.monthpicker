@@ -15,10 +15,6 @@ $(document).ready(function (){
     },500)
   }
 
-  test('widget creation', function (){
-    equals( $('.mtz-monthpicker').length, 0, 'do not create anything til the first call to show()')
-  })
-
   test('first call to show()', function (){
     $('#monthpicker').click()
     isVisible()
