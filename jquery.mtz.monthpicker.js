@@ -65,7 +65,7 @@
                      var $el = $(this), // ref to the jQuery version of the current DOM element
                          el = this;     // ref to the actual DOM element
 
-                     $el.bind('click', function () {
+                     $el.bind('focus', function () {
                        $.fn.monthpicker('apply_to', $(this));
                        $.fn.monthpicker('show');
                      });
@@ -75,11 +75,16 @@
 
              show: function () {
                $.fn.monthpicker.widget.css({display:'block'});
-               $(document).mousedown(function (e){
-       	      	if(!e.target.className || e.target.className.indexOf('mtz-monthpicker') < 0){
-       	      	  $.fn.monthpicker('hide');
-       					}
-               });              
+               $(document).click(function (e){
+                 if(e.target.className != 'monthpicker' && (!e.target.className || e.target.className.indexOf('mtz-monthpicker') < 0)){
+                   $.fn.monthpicker('hide');
+                 }
+               });
+               $(document).focusin(function (e){
+                 if(e.target.className != 'monthpicker' && (!e.target.className || e.target.className.indexOf('mtz-monthpicker') < 0)){
+                   $.fn.monthpicker('hide');
+                 }
+               });
              },
 
              hide: function () {
@@ -92,6 +97,8 @@
                  top: el.offset().top + el.outerHeight(),
                  left: el.offset().left
                });
+               $('td[data-month]').removeClass('ui-state-hover');
+               $('td[data-month]').addClass('ui-state-default');
                helpers.select_year(el);
                helpers.handle_month_click(el);              
              }
@@ -193,12 +200,16 @@
              select_year: function (el) {
                var 
                  year = $.fn.monthpicker.settings.year,
+                 month = $.fn.monthpicker.settings.month,
                  input_data = helpers.extract_input_data(el);
                if (input_data !== null) {
                  year = input_data.year; 
+                 month = input_data.month;
                }
                $('#mtz-monthpicker-year option:selected').removeAttr('selected');
                $('#mtz-monthpicker-year option[value='+ year +']').attr('selected','selected');
+               $('td.mtz-monthpicker[data-month='+ parseInt(month) +']').removeClass('ui-state-default');
+               $('td.mtz-monthpicker[data-month='+ parseInt(month) +']').addClass('ui-state-hover');
              }
 
          };
@@ -221,7 +232,8 @@
      $.fn.monthpicker.defaults = {
      	  pattern: 'mm/yyyy',
      	  monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-     	  year: (new Date()).getFullYear()
+     	  year: (new Date()).getFullYear(),
+     	  month: 0
      };
 
  })(jQuery);
