@@ -166,8 +166,15 @@
                  val = $(el).val(),
                  settings = $.fn.monthpicker.settings;
                if (val) {
-                 val = val.split(settings.separator);
-                 if(settings.pattern.indexOf('y') > settings.pattern.indexOf(settings.separator)) {
+                 if (settings.separator.length == 0) {
+             					var yr = val.substr(settings.pattern.indexOf('y'), settings.pattern.split('y').length - 1);
+            						var mth = val.substr(settings.pattern.indexOf('m'), settings.pattern.split('m').length - 1);
+           
+            						return { month: mth, year: yr };
+            					} else {
+            						val = val.split(settings.separator);
+            					}
+                 if(settings.pattern.indexOf('y') > settings.pattern.indexOf('m')) {
                    return { month: val[0], year: val[1] };
                  } else {
                    return { month: val[1], year: val[0] };
