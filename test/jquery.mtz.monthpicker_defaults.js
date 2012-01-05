@@ -37,7 +37,9 @@ $(document).ready(function () {
     isVisible();
     $('#mtz-monthpicker-year').find('option[value=2011]').attr('selected','selected');
     $('#mtz-monthpicker').find('td[data-month=2]').click();
-    equals( $('#monthpicker').val(), '02/2011', 'should select "02/2011"');
+    window.setTimeout(function () {
+      equals( $('#monthpicker').val(), '02/2011', 'should select "02/2011"');
+    },500);
     isHidden();
   });
 
