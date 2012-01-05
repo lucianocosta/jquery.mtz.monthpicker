@@ -115,7 +115,7 @@
                container.css({
                  position:'absolute',
                  zIndex:999999,
-                 whiteSpace:'no-wrap',
+                 whiteSpace:'nowrap',
                  width:'250px',
                  overflow:'hidden',
                  textAlign:'center',
