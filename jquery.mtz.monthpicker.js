@@ -1,5 +1,5 @@
 /*
- * jQuery UI Monthpicker 2.0.0
+ * jQuery UI Monthpicker 3.0.0
  *
  * @licensed MIT <see below>
  * @licensed GPL <see below>
@@ -49,186 +49,186 @@
  * You should have received a copy of the GNU General Public License along 
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- (function ($) {
 
-     $.fn.monthpicker = function (method) {
+(function ($) {
 
-         // public methods
-         var methods = {
+    var methods = {
+        init : function (options) { 
+            return this.each(function(){
+                var 
+                    $this = $(this),
+                    data = $this.data('monthpicker'),
+                    year = (options && options.year) ? options.year : (new Date()).getFullYear(),
+                    settings = $.extend({
+                        pattern: 'mm/yyyy',
+                        selectedMonth: null,
+                        selectedYear: year,
+                        startYear: year - 10,
+                        finalYear: year + 10,
+                        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        id: "monthpicker_" + (Math.random() * Math.random()).toString().replace('.', ''),
+                        openOnFocus: true,
+                        disabledMonths: []
+                    }, options);
 
-             init : function (options) {
-                 $.fn.monthpicker.settings = $.extend({}, this.monthpicker.defaults, options);
-                 $.fn.monthpicker.widget = helpers.mount_widget(this.monthpicker.settings);
-                 $.fn.monthpicker.widget.appendTo('body');
-                 $.fn.monthpicker.settings.separator = $.fn.monthpicker.settings.pattern.replace(/(mm|m|yyyy|yy|y)/ig,'');                
-                 return this.each(function () {
-                     var $el = $(this), // ref to the jQuery version of the current DOM element
-                         el = this;     // ref to the actual DOM element
+                settings.dateSeparator = settings.pattern.replace(/(mm|m|yyyy|yy|y)/ig,'');
 
-                     $el.bind('click', function () {
-                       $.fn.monthpicker('apply_to', $(this));
-                       $.fn.monthpicker('show');
-                     });
+                // If the plugin hasn't been initialized yet for this element
+                if (!data) {
+                    $(this).data('monthpicker', {
+                        'target': $this,
+                        'settings': settings
+                    });
+                }
 
-                 });
-             },
+                $this.monthpicker('mountWidget', settings);
 
-             show: function () {
-               $.fn.monthpicker.widget.css({display:'block'});
-               $(document).mousedown(function (e){
-       	      	if(!e.target.className || e.target.className.indexOf('mtz-monthpicker') < 0){
-       	      	  $.fn.monthpicker('hide');
-       					}
-               });              
-             },
+                $this.bind('monthpicker-click-month', function (e, month, year) {
+                    $this.monthpicker('setValue', settings);
+                    $this.monthpicker('hide');
+                });
 
-             hide: function () {
-               $.fn.monthpicker.widget.css({display:'none'});
-             },
+                $(document).mousedown(function (e){
+                    if(!e.target.className || e.target.className.indexOf('mtz-monthpicker') < 0){
+                        $this.monthpicker('hide');
+                    }
+                }); 
 
-             // tell the widget what input element to interact with
-             apply_to: function (el) {
-               $.fn.monthpicker.widget.css({
-                 top: el.offset().top + el.outerHeight(),
-                 left: el.offset().left
-               });
-               helpers.select_year(el);
-               helpers.handle_month_click(el);              
-             }
-         };
+                if (settings.openOnFocus === true) {
+                    $this.bind('focus', function () {
+                        $this.monthpicker('show');
+                    });
+                }
+            });
+        },
 
-         // private methods
-         var helpers = {
+        show: function (n) {
+            $('#' + this.data('monthpicker').settings.id).show();
+            this.trigger('monthpicker-show');
+        },
 
-             mount_widget: function (settings) {
-               var
-                 container = $('<div id="mtz-monthpicker" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" />'),
-                 header = $('<div class="ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all mtz-monthpicker" />'),
-                 combo = $('<select id="mtz-monthpicker-year" class="mtz-monthpicker" />'),
-                 table = $('<table class="mtz-monthpicker" />'),
-                 tbody = $('<tbody class="mtz-monthpicker" />'),
-                 tr = $('<tr class="mtz-monthpicker" />'),
-                 td = '';
-                 year = $.fn.monthpicker.settings.year,
-                 option = null;
+        hide: function () { 
+            $('#' + this.data('monthpicker').settings.id).hide();
+            this.trigger('monthpicker-hide');
+        },
 
-               container.css({
-                 position:'absolute',
-                 zIndex:999999,
-                 whiteSpace:'nowrap',
-                 width:'250px',
-                 overflow:'hidden',
-                 textAlign:'center',
-                 display:'none'
-               });
+        setValue: function (settings) {
+            var 
+                month = settings.selectedMonth,
+                year = settings.selectedYear;
 
-               // mount years combo
-               for (var i = year-10; i <= year+10; i++) {
-                 var option = $('<option class="mtz-monthpicker" />').attr('value',i).append(i);
-                 if (year === i) {
-                   option.attr('selected', 'selected');
-                 }
-                 combo.append(option);
-               }
-               header.append(combo).appendTo(container);
+            if(settings.pattern.indexOf('mm') >= 0 && settings.selectedMonth < 10) {
+                month = '0' + settings.selectedMonth;
+            }
 
-               // mount months table
-               for(var i=1; i<=12; i++){
-                 td = $('<td class="ui-state-default mtz-monthpicker" style="padding:5px;cursor:default;" />').attr('data-month',i)
-       					td.append(settings.monthNames[i-1]);
-                 tr.append(td).appendTo(tbody);
-                 if (i % 3 === 0) {
-                   tr = $('<tr class="mtz-monthpicker" />'); 
-                 }
-               }
-               table.append(tbody).appendTo(container)
+            if(settings.pattern.indexOf('yyyy') < 0) {
+                year = year.toString().substr(2,2);
+            } 
 
-               return container;
-             },
+            if (settings.pattern.indexOf('y') > settings.pattern.indexOf(settings.dateSeparator)) {
+                this.val(month + settings.dateSeparator + year);
+            } else {
+                this.val(year + settings.dateSeparator + month);
+            }
+        },
 
-             apply_pattern: function (month, year) {
-               var 
-                 m = month,
-                 settings = $.fn.monthpicker.settings;
-               if(settings.pattern.indexOf('mm') >= 0 && month < 10) {
-                 m = '0' + m;
-               }
-               if (settings.pattern.indexOf('y') > settings.pattern.indexOf(settings.separator)){
-                 return m + settings.separator + year;  
-               } else {
-                 return  year + settings.separator + m;
-               }
+        disableMonths: function (months) {
+            var 
+                settings = this.data('monthpicker').settings,
+                container = $('#' + settings.id);
 
-             },
+            settings.disabledMonths = months;
 
-             extract_input_data: function (el) {
-               var 
-                 val = $(el).val(),
-                 settings = $.fn.monthpicker.settings;
-               if (val) {
-                 if (settings.separator.length == 0) {
-             					var yr = val.substr(settings.pattern.indexOf('y'), settings.pattern.split('y').length - 1);
-            						var mth = val.substr(settings.pattern.indexOf('m'), settings.pattern.split('m').length - 1);
-           
-            						return { month: mth, year: yr };
-            					} else {
-            						val = val.split(settings.separator);
-            					}
-                 if(settings.pattern.indexOf('y') > settings.pattern.indexOf('m')) {
-                   return { month: val[0], year: val[1] };
-                 } else {
-                   return { month: val[1], year: val[0] };
-                 }                
-               } else {
-                 return null;
-               }
-             },
+            container.find('.mtz-monthpicker-month').each(function () {
+                var m = parseInt($(this).data('month'));
+                if ($.inArray(m, months) >= 0) {
+                    $(this).addClass('ui-state-disabled');
+                } else {
+                    $(this).removeClass('ui-state-disabled');
+                }
+            });
+        },
 
-             handle_month_click: function (el){
-               $.fn.monthpicker.widget.find('td').unbind('click').bind('click', function () {
-                 var 
-                   month = $(this).attr('data-month'),
-                   year = $.fn.monthpicker.widget.find('option:selected').val();
-                 $(el).val( helpers.apply_pattern(month, year) );
-                 $.fn.monthpicker('hide');
-               });
-             },
+        mountWidget: function (settings) {
+            var
+                monthpicker = this,
+                container = $('<div id="'+ settings.id +'" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" />'),
+                header = $('<div class="ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all mtz-monthpicker" />'),
+                combo = $('<select class="mtz-monthpicker mtz-monthpicker-year" />'),
+                table = $('<table class="mtz-monthpicker" />'),
+                tbody = $('<tbody class="mtz-monthpicker" />'),
+                tr = $('<tr class="mtz-monthpicker" />'),
+                td = '';
+                selectedYear = settings.selectedYear,
+                option = null;
 
-             // mark an year as selected in the years combo
-             // try #1: data on input
-             // try #2: settings.year
-             select_year: function (el) {
-               var 
-                 year = $.fn.monthpicker.settings.year,
-                 input_data = helpers.extract_input_data(el);
-               if (input_data !== null) {
-                 year = input_data.year; 
-               }
-               $('#mtz-monthpicker-year option:selected').removeAttr('selected');
-               $('#mtz-monthpicker-year option[value='+ year +']').attr('selected','selected');
-             }
+            container.css({
+                position:'absolute',
+                zIndex:999999,
+                whiteSpace:'nowrap',
+                width:'250px',
+                overflow:'hidden',
+                textAlign:'center',
+                display:'none',
+                top: monthpicker.offset().top + monthpicker.outerHeight(),
+                left: monthpicker.offset().left
+            });
 
-         };
+            // mount years combo
+            for (var i = settings.startYear; i <= settings.finalYear; i++) {
+                var option = $('<option class="mtz-monthpicker" />').attr('value', i).append(i);
+                if (settings.selectedYear === i) {
+                    option.attr('selected', 'selected');
+                }
+                combo.append(option);
+            }
+            header.append(combo).appendTo(container);
 
-         // method calling
-         if (methods[method]) {
-             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-         } else if (typeof method === 'object' || !method) {
-             return methods.init.apply(this, arguments);
-         } else {
-             $.error( 'Method "' +  method + '" does not exist in monthpicker plugin!');
-         }
+            // mount months table
+            for (var i=1; i<=12; i++) {
+                td = $('<td class="ui-state-default mtz-monthpicker mtz-monthpicker-month" style="padding:5px;cursor:default;" />').attr('data-month',i);
+                td.append(settings.monthNames[i-1]);
+                tr.append(td).appendTo(tbody);
+                if (i % 3 === 0) {
+                    tr = $('<tr class="mtz-monthpicker" />'); 
+                }
+            }
 
-     };
+            table.append(tbody).appendTo(container);
 
-     $.fn.monthpicker.widget = {}; // our widget is a singleton
+            container.find('.mtz-monthpicker-month').bind('click', function () {
+                var m = parseInt($(this).data('month'));
+                if ($.inArray(m, settings.disabledMonths) < 0 ) {
+                    settings.selectedMonth = $(this).data('month');
+                    monthpicker.trigger('monthpicker-click-month', $(this).data('month'));
+                }
+            });
 
-     $.fn.monthpicker.settings = {}; // will hold a merge of default settings and user provided ones
+            container.find('.mtz-monthpicker-year').bind('change', function () {
+                settings.selectedYear = $(this).val();
+                monthpicker.trigger('monthpicker-change-year', $(this).val());
+            });
 
-     $.fn.monthpicker.defaults = {
-     	  pattern: 'mm/yyyy',
-     	  monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-     	  year: (new Date()).getFullYear()
-     };
+            container.appendTo('body');
+        },
 
- })(jQuery);
+        destroy: function () {
+            return this.each(function () {
+                // TODO: look for other things to remove
+                $(this).removeData('monthpicker');
+            });
+        }
+
+    };
+
+    $.fn.monthpicker = function (method) {
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call( arguments, 1 ));
+        } else if (typeof method === 'object' || ! method) {
+            return methods.init.apply(this, arguments);
+        } else {
+            $.error('Method ' + method + ' does not exist on jQuery.mtz.monthpicker');
+        }    
+    };
+
+})(jQuery);
