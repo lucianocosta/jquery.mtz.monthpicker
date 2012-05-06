@@ -79,37 +79,43 @@
                         'target': $this,
                         'settings': settings
                     });
-                }
 
-                $this.monthpicker('mountWidget', settings);
-
-                $this.bind('monthpicker-click-month', function (e, month, year) {
-                    $this.monthpicker('setValue', settings);
-                    $this.monthpicker('hide');
-                });
-
-                $(document).mousedown(function (e){
-                    if(!e.target.className || e.target.className.indexOf('mtz-monthpicker') < 0){
-                        $this.monthpicker('hide');
+                    if (settings.openOnFocus === true) {
+                        $this.bind('focus', function () {
+                            $this.monthpicker('show');
+                        });
                     }
-                }); 
 
-                if (settings.openOnFocus === true) {
-                    $this.bind('focus', function () {
-                        $this.monthpicker('show');
+                    $this.monthpicker('mountWidget', settings);
+
+                    $this.bind('monthpicker-click-month', function (e, month, year) {
+                        $this.monthpicker('setValue', settings);
+                        $this.monthpicker('hide');
+                    });
+
+                    $(document).mousedown(function (e){
+                        if(!e.target.className || e.target.className.indexOf('mtz-monthpicker') < 0){
+                            $this.monthpicker('hide');
+                        }
                     });
                 }
+
             });
         },
 
         show: function (n) {
-            $('#' + this.data('monthpicker').settings.id).show();
+            var widget = $('#' + this.data('monthpicker').settings.id);
+            widget.show();
+            widget.find('select').focus();
             this.trigger('monthpicker-show');
         },
 
-        hide: function () { 
-            $('#' + this.data('monthpicker').settings.id).hide();
-            this.trigger('monthpicker-hide');
+        hide: function () {
+            var widget = $('#' + this.data('monthpicker').settings.id);
+            if (widget.is(':visible')) {
+                widget.hide();
+                this.trigger('monthpicker-hide');
+            }
         },
 
         setValue: function (settings) {
