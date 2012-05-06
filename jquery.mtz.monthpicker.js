@@ -1,5 +1,5 @@
 /*
- * jQuery UI Monthpicker 3.0.0
+ * jQuery UI Monthpicker
  *
  * @licensed MIT <see below>
  * @licensed GPL <see below>
