@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <script src="javascripts/scale.fix.js"></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script> 
+    <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js'></script>
+    <script type="text/javascript" src="https://raw.github.com/lucianocosta/jquery.mtz.monthpicker/master/jquery.mtz.monthpicker.js"></script>
+    <link rel='stylesheet' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/base/jquery-ui.css'>
+    <style type="text/css">
+      td.mtz-monthpicker-month {
+        text-align:center;
+      }
+    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
     <!--[if lt IE 9]>
@@ -27,24 +36,176 @@
         </ul>
       </header>
       <section>
-        <p>I'm gonna update this soon, please back later!</p>
+        <h3>Hello!</h3>
+        <p>Monthpicker is a jQuery widget that allows you to pick just month and year (without day).</p>
+        <p>Basic usage: <input type="text" id="default_widget" > <small>( click on the input )</small></p>
+        <pre><code>$('#default_widget').monthpicker();</code></pre>
+
+        <br />
+        <h3>Configuration</h3>
+        <p>By default, the year-range starts on (current_year - 10) and ends on (current_year + 10), having the current year selected.</p>
+        <p>This and other settings can be overwritten on widget initialization:</p>
+
+<pre><code>options = {
+    pattern: 'yyyy-mm', // Default is 'mm/yyyy' and separator char is not mandatory
+    selectedYear: 2010,
+    startYear: 2008,
+    finalYear: 2012,
+    monthNames: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+};
+
+$('#custom_widget').monthpicker(options);
+</code></pre>
+
+        <p>Applying the options above: <input type="text" id="custom_widget" ></p>
+        <p>You can also use a pattern of 2 digits for year and/or 1 for month.</p>
+
+        <br />
+        <h3>Methods</h3>
+        <p>You can interact with monthpicker programatically, through some method calls (following jQuery standards).</p>
+
+<pre><code>$('#my_widget').monthpicker('show');
+$('#my_widget').monthpicker('hide');
+$('#my_widget').monthpicker('destroy');
+$('#my_widget').monthpicker('disableMonths', [1, 2, 11, 12]);
+$('#my_widget').monthpicker('disableMonths', []); // re-enables all months
+</code></pre>
+
+        <br />
+        <h3>Events</h3>
+        <p>You can listen to some events triggered by the widget:</p>
+
+        <ul>
+          <li>monthpicker-show</li>
+          <li>monthpicker-hide</li>
+          <li>monthpicker-click-month</li>
+          <li>monthpicker-change-year</li>          
+        </ul>
+
+<pre><code>$('#events_widget').monthpicker();
+
+$('#events_widget').monthpicker().bind('monthpicker-click-month', function (e, month) {
+    alert('You clicked on month ' + month);
+
+}).bind('monthpicker-change-year', function (e, year) {
+    alert('You chosed the year ' + year);
+
+}).bind('monthpicker-show', function () {
+    alert('showing...');
+
+}).bind('monthpicker-hide', function () {
+    alert('hiding...');
+});
+
+// chainability is also ok!
+</code></pre>
+
+        <p>Applying the events above: <input type="text" id="events_widget" ></p>
+
+        <br />
+        <h3>All toghether</h3>
+        <p>Mixing events and methods you can, for instance, disable some months only for the year(s) you want.</p>
+
+<pre><code>var options = {
+    selectedYear: 2009,
+    startYear: 2008,
+    finalYear: 2010,
+    openOnFocus: false // Let's now use a button to show the widget
+};
+
+$('#last_widget').monthpicker(options);
+
+$('#last_widget').monthpicker().bind('monthpicker-change-year', function (e, year) {
+    $('#last_widget').monthpicker('disableMonths', []); // (re)enables all
+    if (year === '2008') {
+        $('#last_widget').monthpicker('disableMonths', [1, 2, 3, 4]);
+    }
+    if (year === '2010') {
+        $('#last_widget').monthpicker('disableMonths', [9, 10, 11, 12]);
+    }
+});
+
+$('#last_widget_button').bind('click', function () {
+    $('#last_widget').monthpicker('show');
+});
+</code></pre>
+
+        <p>See it: <input type="text" id="last_widget" > <input type="button" value="..." id="last_widget_button"><small> ( click the button )</small></p>
+
+        <br />
+        <h3>Final notes</h3>
+        <p>Even if you create many monthpicker widgets using CSS class selector, there will be one (and only one) instance for each input matching your selector, so you can still manipulate them isolatedly. <small>( In the previous versions, the widget was a 'singleton', shared by all inputs )</small></p>
+        <p>If you have any issue, please report it on <a href="https://github.com/lucianocosta/jquery.mtz.monthpicker">GitHub</a> issues section.</p>
+        <p>If you have very specific needs for the widget, fork it and go on. It's much simpler now!</p>
+
+        <br />
+        <h3>Project Goals</h3>
+        <ul>
+          <li>create a widget that I missed on the web</i>
+          <li>keep it as simple as a monthpicker could be</i>
+          <li>share it</i>
+        </ul>
+
       </section>
     </div>
     <footer>
-      <p>Project maintained by <a href="https://github.com/lucianocosta">lucianocosta</a></p>
-      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+      <p>Project maintained on GitHub by <a href="https://github.com/lucianocosta">Luciano Costa</a></p>
+      <p>Follow me on Twitter: <a href="http://twitter.com/lscosta">@lscosta</a></p>
     </footer>
     <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
-              <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-24689802-1");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
+    <script type="text/javascript">
+      $(function () {
+        $('#default_widget').monthpicker();
+
+        $('#custom_widget').monthpicker({
+            pattern: 'yyyy-mm',
+            selectedYear: 2010,
+            startYear: 2008,
+            finalYear: 2012,
+            monthNames: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+        });
+
+        $('#events_widget').monthpicker().bind('monthpicker-click-month', function (e, month) {
+            alert('You clicked on month ' + month);
+
+        }).bind('monthpicker-change-year', function (e, year) {
+            alert('You chosed the year ' + year);
+
+        }).bind('monthpicker-show', function () {
+            alert('showing... ' + $(this).attr('id'));
+            
+        }).bind('monthpicker-hide', function () {
+            alert('hiding... ' + $(this).attr('id'));
+        });
+
+        $('#last_widget').monthpicker({selectedYear: 2009, startYear: 2008, finalYear: 2010, openOnFocus: false});
+
+        $('#last_widget').monthpicker().bind('monthpicker-change-year', function (e, year) {
+            $('#last_widget').monthpicker('disableMonths', []);
+            if (year === '2008') {
+                $('#last_widget').monthpicker('disableMonths', [1, 2, 3, 4]);
+            }
+            if (year === '2010') {
+                $('#last_widget').monthpicker('disableMonths', [9, 10, 11, 12]);
+            }
+        });
+
+        $('#last_widget_button').bind('click', function () {
+            $('#last_widget').monthpicker('show');
+        });
+
+      });
+    </script>
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-24689802-1");
+        pageTracker._trackPageview();
+      } catch (err) {}
+    </script>
 
   </body>
 </html>
