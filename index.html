@@ -37,7 +37,7 @@
       </header>
       <section>
         <h3>Hello!</h3>
-        <p>Monthpicker is a jQuery widget that allows you to pick just month and year (without day).</p>
+        <p>Monthpicker is a jQuery widget that allows you to pick just month and year.</p>
         <p>Basic usage: <input type="text" id="default_widget" > <small>( click on the input )</small></p>
         <pre><code>$('#default_widget').monthpicker();</code></pre>
 
@@ -57,12 +57,12 @@
 $('#custom_widget').monthpicker(options);
 </code></pre>
 
-        <p>Applying the options above: <input type="text" id="custom_widget" ></p>
-        <p>You can also use a pattern of 2 digits for year and/or 1 for month.</p>
+        <p>Options above applied: <input type="text" id="custom_widget" ></p>
+        <p>It's also ok to use a pattern of 2 digits for year and/or 1 for month.</p>
 
         <br />
         <h3>Methods</h3>
-        <p>You can interact with monthpicker programatically, through some method calls (following jQuery standards).</p>
+        <p>Programmatic interation through these methods:</p>
 
 <pre><code>$('#my_widget').monthpicker('show');
 $('#my_widget').monthpicker('hide');
@@ -73,7 +73,7 @@ $('#my_widget').monthpicker('disableMonths', []); // re-enables all months
 
         <br />
         <h3>Events</h3>
-        <p>You can listen to some events triggered by the widget:</p>
+        <p>These are the events triggered by the widget:</p>
 
         <ul>
           <li>monthpicker-show</li>
@@ -81,6 +81,8 @@ $('#my_widget').monthpicker('disableMonths', []); // re-enables all months
           <li>monthpicker-click-month</li>
           <li>monthpicker-change-year</li>          
         </ul>
+
+        <p>Listen to them using jQuery's &nbsp;<code>bind()</code>&nbsp; method:</p>
 
 <pre><code>$('#events_widget').monthpicker();
 
@@ -97,10 +99,10 @@ $('#events_widget').monthpicker().bind('monthpicker-click-month', function (e, m
     alert('hiding...');
 });
 
-// chainability is also ok!
+// chainability is also ok
 </code></pre>
 
-        <p>Applying the events above: <input type="text" id="events_widget" ></p>
+        <p>Events above applied: <input type="text" id="events_widget" ></p>
 
         <br />
         <h3>All toghether</h3>
@@ -134,9 +136,8 @@ $('#last_widget_button').bind('click', function () {
 
         <br />
         <h3>Final notes</h3>
-        <p>Even if you create many monthpicker widgets using CSS class selector, there will be one (and only one) instance for each input matching your selector, so you can still manipulate them isolatedly. <small>( In the previous versions, the widget was a 'singleton', shared by all inputs )</small></p>
+        <p>Even if you create many monthpicker widgets using CSS class selector, there will be one (and only one) instance for each input matching your selector, so you can still manipulate them isolatedly. <small>( In previous versions, only one instance of monthpicker widget was created, with all inputs sharing its behavior )</small></p>
         <p>If you have any issue, please report it on <a href="https://github.com/lucianocosta/jquery.mtz.monthpicker">GitHub</a> issues section.</p>
-        <p>If you have very specific needs for the widget, fork it and go on. It's much simpler now!</p>
 
         <br />
         <h3>Project Goals</h3>
