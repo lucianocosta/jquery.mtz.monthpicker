@@ -63,6 +63,7 @@
                     settings = $.extend({
                         pattern: 'mm/yyyy',
                         selectedMonth: null,
+                        selectedMonthName: '',
                         selectedYear: year,
                         startYear: year - 10,
                         finalYear: year + 10,
