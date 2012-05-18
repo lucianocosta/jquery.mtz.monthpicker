@@ -72,7 +72,7 @@
                         disabledMonths: []
                     }, options);
 
-                settings.dateSeparator = settings.pattern.replace(/(mm|m|yyyy|yy|y)/ig,'');
+                settings.dateSeparator = settings.pattern.replace(/(mmm|mm|m|yyyy|yy|y)/ig,'');
 
                 // If the plugin hasn't been initialized yet for this element
                 if (!data) {
@@ -124,7 +124,9 @@
                 month = settings.selectedMonth,
                 year = settings.selectedYear;
 
-            if(settings.pattern.indexOf('mm') >= 0 && settings.selectedMonth < 10) {
+            if(settings.pattern.indexOf('mmm') >= 0) {
+                month = settings.selectedMonthName;
+            } else if(settings.pattern.indexOf('mm') >= 0 && settings.selectedMonth < 10) {
                 month = '0' + settings.selectedMonth;
             }
 
@@ -207,6 +209,7 @@
                 var m = parseInt($(this).data('month'));
                 if ($.inArray(m, settings.disabledMonths) < 0 ) {
                     settings.selectedMonth = $(this).data('month');
+                    settings.selectedMonthName = $(this).text();
                     monthpicker.trigger('monthpicker-click-month', $(this).data('month'));
                 }
             });
