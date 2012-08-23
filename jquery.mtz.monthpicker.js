@@ -214,9 +214,22 @@
                 if ($.inArray(m, settings.disabledMonths) < 0 ) {
                     settings.selectedMonth = $(this).data('month');
                     settings.selectedMonthName = $(this).text();
+/* Save current selected month */        
+    				$(selectedMonth).toggleClass('ui-state-hover');			
+					selectedMonth=this;
+/* /Save current selected month */                    
+					$(this).toggleClass('ui-state-hover');			
+                    
                     monthpicker.trigger('monthpicker-click-month', $(this).data('month'));
                 }
             });
+            
+            container.find('.mtz-monthpicker-month').bind('mouseover', function () {
+    			$(this).toggleClass('ui-state-hover');
+            });
+            container.find('.mtz-monthpicker-month').bind('mouseleave', function () {
+				$(this).toggleClass('ui-state-hover');
+            });            
 
             container.find('.mtz-monthpicker-year').bind('change', function () {
                 settings.selectedYear = $(this).val();
