@@ -96,7 +96,7 @@
                     });
 
                     $(document).mousedown(function (e){
-                        if(!e.target.className || e.target.className.indexOf('mtz-monthpicker') < 0){
+                        if(!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0){
                             $this.monthpicker('hide');
                         }
                     });
