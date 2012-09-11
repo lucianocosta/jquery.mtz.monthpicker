@@ -95,9 +95,21 @@
                         $this.monthpicker('hide');
                     });
 
-                    $(document).mousedown(function (e){
-                        if(!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0){
-                            $this.monthpicker('hide');
+
+                    $this.addClass("mtz-monthpicker-widgetcontainer");
+                    $(document).unbind("mousedown.mtzmonthpicker").bind("mousedown.mtzmonthpicker",function (e)
+                    {
+                        if(!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0)
+                        {
+                            // old code crashed if dom was removed. the document binding stayed and $this kept the element cached, but it had no data("monthpicker").
+                            // now, the binding stays, but it doesn't try to hide an inexistant monthpicker
+                          $(".mtz-monthpicker-widgetcontainer").each(function(){
+                            if(typeof($(this).data("monthpicker"))!="undefined")
+                            { 
+                              $(this).monthpicker('hide'); 
+                            }
+                          });
+                          
                         }
                     });
                 }
