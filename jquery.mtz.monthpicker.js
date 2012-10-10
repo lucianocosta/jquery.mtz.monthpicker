@@ -153,11 +153,18 @@
             settings.disabledMonths = months;
 
             container.find('.mtz-monthpicker-month').each(function () {
+                $(this).unbind('mouseenter mouseleave');
+
                 var m = parseInt($(this).data('month'));
                 if ($.inArray(m, months) >= 0) {
-                    $(this).addClass('ui-state-disabled');
+                    $(this).addClass('ui-state-disabled');             
                 } else {
                     $(this).removeClass('ui-state-disabled');
+
+                    $(this).bind('mouseenter mouseleave', function(){
+                        $(this).toggleClass('ui-state-hover');
+                        $(this).toggleClass('ui-state-default');
+                    });
                 }
             });
         },
@@ -218,8 +225,33 @@
                 }
             });
 
+            container.find('.mtz-monthpicker-month').each(function(){
+                $(this).unbind('mouseenter mouseleave');
+
+                var m = parseInt($(this).data('month'));
+                if ($.inArray(m, settings.disabledMonths) < 0 ) {
+                    $(this).bind('mouseenter mouseleave', function(){
+                        $(this).toggleClass('ui-state-hover');
+                        $(this).toggleClass('ui-state-default');
+                    });
+                }
+            });
+
             container.find('.mtz-monthpicker-year').bind('change', function () {
                 settings.selectedYear = $(this).val();
+
+                container.find('.mtz-monthpicker-month').each(function(){
+                    $(this).unbind('mouseenter mouseleave');
+
+                    var m = parseInt($(this).data('month'));
+                    if ($.inArray(m, settings.disabledMonths) < 0 ) {
+                        $(this).bind('mouseenter mouseleave', function(){
+                            $(this).toggleClass('ui-state-hover');
+                            $(this).toggleClass('ui-state-default');
+                        });
+                    }
+                });
+
                 monthpicker.trigger('monthpicker-change-year', $(this).val());
             });
 
