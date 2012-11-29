@@ -185,7 +185,7 @@
                 attrFinalYear = $(this).data('final-year');
 
             if (attSelectedYear) {
-                settings.selectedYear = selectedYear;
+                settings.selectedYear = attrSelectedYear;
             }
 
             if (attrStartYear) {
