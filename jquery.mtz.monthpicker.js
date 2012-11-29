@@ -180,8 +180,13 @@
                 td = '',
                 selectedYear = settings.selectedYear,
                 option = null,
+                attSelectedYear = $(this).data('selected-year'),
                 attrStartYear = $(this).data('start-year'),
                 attrFinalYear = $(this).data('final-year');
+
+            if (attSelectedYear) {
+                settings.selectedYear = selectedYear;
+            }
 
             if (attrStartYear) {
                 settings.startYear = attrStartYear;
