@@ -8,7 +8,7 @@
  * http://lucianocosta.info/jquery.mtz.monthpicker/
  *
  * Depends:
- *	jquery.ui.core.js
+ *  jquery.ui.core.js
  */
 
 /**
@@ -177,9 +177,19 @@
                 table = $('<table class="mtz-monthpicker" />'),
                 tbody = $('<tbody class="mtz-monthpicker" />'),
                 tr = $('<tr class="mtz-monthpicker" />'),
-                td = '';
+                td = '',
                 selectedYear = settings.selectedYear,
-                option = null;
+                option = null,
+                attrStartYear = $(this).data('start-year'),
+                attrFinalYear = $(this).data('final-year');
+
+            if (attrStartYear) {
+                settings.startYear = attrStartYear;
+            }
+
+            if (attrFinalYear) {
+                settings.finalYear = attrFinalYear;
+            }
 
             container.css({
                 position:'absolute',
