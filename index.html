@@ -19,6 +19,9 @@
       td.mtz-monthpicker-month {
         text-align:center;
       }
+      select.mtz-monthpicker:focus {
+        outline: none;
+      }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
@@ -60,6 +63,27 @@ $('#custom_widget').monthpicker(options);
 
         <p>Options above applied: <input type="text" id="custom_widget" ></p>
         <p>It's also ok to use a pattern of 2 digits for year and/or 1 for month. To use month name instead of its number, use 'mmm'.</p>
+
+        <p>
+          <div>
+            <small style='background-color:orange; color:white; padding:3px;'>NEW !</small>
+            You can override initial settings by setting some data-attributes on your inputs:
+            <ul>
+              <li>data-start-year</li>
+              <li>data-final-year</li>
+              <li>data-selected-year</li>
+            </ul>
+          </div>
+        </p>
+
+<pre><code>
+&lt;input class="monthpicker" data-start-year="2009" data-final-year="2011" data-selected-year="2010"&gt;
+
+$('.monthpicker').monthpicker();
+</code></pre>
+
+        <p>Options above applied: <input id="data_attr_example" class="monthpicker" data-start-year="2009" data-final-year="2011" data-selected-year="2010" ></p>
+
 
         <br />
         <h3>Methods</h3>
@@ -174,6 +198,8 @@ $('#last_widget_button').bind('click', function () {
     <script type="text/javascript">
       $(function () {
         $('#default_widget').monthpicker();
+
+        $('.monthpicker').monthpicker();
 
         $('#custom_widget').monthpicker({
             pattern: 'yyyy-mm',
