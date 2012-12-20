@@ -14,17 +14,17 @@
 /**
  * MIT License
  * Copyright (c) 2011, Luciano Costa
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights 
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
- * copies of the Software, and to permit persons to whom the Software is 
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,33 +36,34 @@
 /**
  * GPL LIcense
  * Copyright (c) 2011, Luciano Costa
- * 
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the 
- * Free Software Foundation, either version 3 of the License, or 
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
- * 
- * You should have received a copy of the GNU General Public License along 
+ *
+ * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 (function ($) {
 
     var methods = {
-        init : function (options) { 
+        init : function (options) {
             return this.each(function () {
-                var 
+                var
                     $this = $(this),
                     data = $this.data('monthpicker'),
                     year = (options && options.year) ? options.year : (new Date()).getFullYear(),
                     settings = $.extend({
                         pattern: 'mm/yyyy',
                         selectedMonth: null,
+                        defaultMonth: null,
                         selectedMonthName: '',
                         selectedYear: year,
                         startYear: year - 10,
@@ -90,9 +91,29 @@
 
                     $this.monthpicker('mountWidget', settings);
 
+                    // If the default month has not been set.  Set that value randomly to a
+                    // none disabled month.
+                    if (settings.defaultMonth === null) {
+                        var validMonths = [];
+
+                        for (var k = 1; k <= 12; k++ ) {
+                            if ($.inArray(k, settings.disabledMonths) < 0) {
+                                validMonths.push(k);
+                            }
+                        }
+                        settings.defaultMonth = validMonths[Math.floor(Math.random() * validMonths.length)];
+                    }
+
+
+                    // Set the values and hide the monthpicker when a month is selectd.
                     $this.bind('monthpicker-click-month', function (e, month, year) {
                         $this.monthpicker('setValue', settings);
                         $this.monthpicker('hide');
+                    });
+
+                    // Set the year whenever the year is changed.
+                    $this.bind('monthpicker-change-year', function (e, month, year) {
+                        $this.monthpicker('setValue', settings);
                     });
 
                     // hide widget when user clicks elsewhere on page
@@ -100,8 +121,8 @@
                     $(document).unbind("mousedown.mtzmonthpicker").bind("mousedown.mtzmonthpicker", function (e) {
                         if (!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0) {
                             $(".mtz-monthpicker-widgetcontainer").each(function () {
-                                if (typeof($(this).data("monthpicker"))!="undefined") { 
-                                    $(this).monthpicker('hide'); 
+                                if (typeof($(this).data("monthpicker"))!="undefined") {
+                                    $(this).monthpicker('hide');
                                 }
                             });
                         }
@@ -130,36 +151,43 @@
         },
 
         setValue: function (settings) {
-            var 
-                month = settings.selectedMonth,
-                year = settings.selectedYear;
+            var
+                // If no month or month name is selected use default month.
+                month = Boolean(settings.selectedMonth) ? settings.selectedMonth : settings.defaultMonth,
+                year = settings.selectedYear,
+                monthName = Boolean(settings.selectedMonthName) ? settings.selectedMonthName : settings.monthNames[month - 1];
 
+            // Word format month (i.e. Jan, Feb, etc.)
             if(settings.pattern.indexOf('mmm') >= 0) {
-                month = settings.selectedMonthName;
-            } else if(settings.pattern.indexOf('mm') >= 0 && settings.selectedMonth < 10) {
-                month = '0' + settings.selectedMonth;
+                month = monthName;
+            // Number format month (i.e. 01, 11, etc.)
+            } else if(settings.pattern.indexOf('mm') >= 0 && month < 10) {
+                month = '0' + month;
             }
 
+            // If format is not set as four number year, set the hear to 2 digits.
             if(settings.pattern.indexOf('yyyy') < 0) {
                 year = year.toString().substr(2,2);
-            } 
+            }
 
+            // If the year is formatted to come after the month.
             if (settings.pattern.indexOf('y') > settings.pattern.indexOf(settings.dateSeparator)) {
                 this.val(month + settings.dateSeparator + year);
+            // Year is formated to come before the month.
             } else {
                 this.val(year + settings.dateSeparator + month);
             }
         },
 
         disableMonths: function (months) {
-            var 
+            var
                 settings = this.data('monthpicker').settings,
                 container = $('#' + settings.id);
 
             settings.disabledMonths = months;
 
             container.find('.mtz-monthpicker-month').each(function () {
-                var m = parseInt($(this).data('month'));
+                var m = parseInt($(this).data('month'), 10);
                 if ($.inArray(m, months) >= 0) {
                     $(this).addClass('ui-state-disabled');
                 } else {
@@ -210,7 +238,7 @@
 
             // mount years combo
             for (var i = settings.startYear; i <= settings.finalYear; i++) {
-                var option = $('<option class="mtz-monthpicker" />').attr('value', i).append(i);
+                option = $('<option class="mtz-monthpicker" />').attr('value', i).append(i);
                 if (settings.selectedYear === i) {
                     option.attr('selected', 'selected');
                 }
@@ -219,23 +247,28 @@
             header.append(combo).appendTo(container);
 
             // mount months table
-            for (var i=1; i<=12; i++) {
-                td = $('<td class="ui-state-default mtz-monthpicker mtz-monthpicker-month" style="padding:5px;cursor:default;" />').attr('data-month',i);
-                td.append(settings.monthNames[i-1]);
+            for (var j = 1; j <= 12; j++) {
+                td = $('<td class="ui-state-default mtz-monthpicker mtz-monthpicker-month" />').attr('data-month', j);
+                td.append(settings.monthNames[j - 1]);
                 tr.append(td).appendTo(tbody);
-                if (i % 3 === 0) {
-                    tr = $('<tr class="mtz-monthpicker" />'); 
+                if (j % 3 === 0) {
+                    tr = $('<tr class="mtz-monthpicker" />');
                 }
             }
 
             table.append(tbody).appendTo(container);
 
             container.find('.mtz-monthpicker-month').bind('click', function () {
-                var m = parseInt($(this).data('month'));
+                var m = parseInt($(this).data('month'), 10);
                 if ($.inArray(m, settings.disabledMonths) < 0 ) {
                     settings.selectedMonth = $(this).data('month');
                     settings.selectedMonthName = $(this).text();
                     monthpicker.trigger('monthpicker-click-month', $(this).data('month'));
+
+                    // Remove selected class from selected months and add selected class to current selection.
+                    $(this).parent().siblings().children().removeClass('mtz-monthpicker-month-selected');
+                    $(this).siblings().removeClass('mtz-monthpicker-month-selected');
+                    $(this).addClass("mtz-monthpicker-month-selected");
                 }
             });
 
@@ -263,7 +296,7 @@
             return methods.init.apply(this, arguments);
         } else {
             $.error('Method ' + method + ' does not exist on jQuery.mtz.monthpicker');
-        }    
+        }
     };
 
 })(jQuery);
