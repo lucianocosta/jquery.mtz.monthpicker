@@ -277,6 +277,16 @@
                 monthpicker.trigger('monthpicker-change-year', $(this).val());
             });
 
+            // Disable all disabledMonths on creation.
+            container.find('.mtz-monthpicker-month').each(function () {
+                var m = parseInt($(this).data('month'), 10);
+                if ($.inArray(m, settings.disabledMonths) >= 0) {
+                    $(this).addClass('ui-state-disabled');
+                } else {
+                    $(this).removeClass('ui-state-disabled');
+                }
+            });
+
             container.appendTo('body');
         },
 
