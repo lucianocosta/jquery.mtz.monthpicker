@@ -63,7 +63,6 @@
                     settings = $.extend({
                         pattern: 'mm/yyyy',
                         selectedMonth: null,
-                        defaultMonth: null,
                         selectedMonthName: '',
                         selectedYear: year,
                         startYear: year - 10,
@@ -93,7 +92,7 @@
 
                     // If the default month has not been set.  Set that value randomly to a
                     // none disabled month.
-                    if (settings.defaultMonth === null) {
+                    if (settings.selectedMonth === null) {
                         var validMonths = [];
 
                         for (var k = 1; k <= 12; k++ ) {
@@ -101,7 +100,7 @@
                                 validMonths.push(k);
                             }
                         }
-                        settings.defaultMonth = validMonths[Math.floor(Math.random() * validMonths.length)];
+                        settings.selectedMonth = validMonths[Math.floor(Math.random() * validMonths.length)];
                     }
 
 
@@ -152,8 +151,8 @@
 
         setValue: function (settings) {
             var
-                // If no month or month name is selected use default month.
-                month = Boolean(settings.selectedMonth) ? settings.selectedMonth : settings.defaultMonth,
+                // If no month name is present, get it from the existing month.
+                month = settings.selectedMonth,
                 year = settings.selectedYear,
                 monthName = Boolean(settings.selectedMonthName) ? settings.selectedMonthName : settings.monthNames[month - 1];
 
@@ -250,6 +249,7 @@
             for (var j = 1; j <= 12; j++) {
                 td = $('<td class="ui-state-default mtz-monthpicker mtz-monthpicker-month" />').attr('data-month', j);
                 td.append(settings.monthNames[j - 1]);
+                if (j == settings.selectedMonth) {td.addClass('mtz-monthpicker-month-selected');}
                 tr.append(td).appendTo(tbody);
                 if (j % 3 === 0) {
                     tr = $('<tr class="mtz-monthpicker" />');
