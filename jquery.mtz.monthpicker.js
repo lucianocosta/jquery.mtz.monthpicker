@@ -53,6 +53,31 @@
 
 (function ($) {
 
+    // These functions are pulled out so unbind can be used to easily remove
+    // the added events.
+    var _clickMonthPicker =  function() {
+            $(this).monthpicker('setValue');
+            $(this).monthpicker('hide');
+        },
+
+        _changeMonthPckerYear = function() {
+            $this.monthpicker('setValue');
+        },
+
+        _blurMonthPicker = function (e) {
+            if (!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0) {
+                $(".mtz-monthpicker-widgetcontainer").each(function () {
+                    if (typeof($(this).data("monthpicker"))!="undefined") {
+                        $(this).monthpicker('hide');
+                    }
+                });
+            }
+        },
+
+        _showMonthPicker = function(e) {
+            $(this).monthpicker('show');
+        };
+
     var methods = {
         init : function (options) {
             return this.each(function () {
@@ -66,7 +91,7 @@
                         selectedMonthName: '',
                         selectedYear: year,
                         startYear: year - 10,
-                        finalYear: year + 10,
+                        endYear: year + 10,
                         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                         id: "monthpicker_" + (Math.random() * Math.random()).toString().replace('.', ''),
                         openOnFocus: true,
@@ -83,9 +108,7 @@
                     });
 
                     if (settings.openOnFocus === true) {
-                        $this.bind('focus', function () {
-                            $this.monthpicker('show');
-                        });
+                        $this.bind('focus', _showMonthPicker);
                     }
 
                     $this.monthpicker('mountWidget', settings);
@@ -105,27 +128,14 @@
 
 
                     // Set the values and hide the monthpicker when a month is selectd.
-                    $this.bind('monthpicker-click-month', function (e, month, year) {
-                        $this.monthpicker('setValue', settings);
-                        $this.monthpicker('hide');
-                    });
+                    $this.bind('monthpicker-click-month', _clickMonthPicker);
 
                     // Set the year whenever the year is changed.
-                    $this.bind('monthpicker-change-year', function (e, month, year) {
-                        $this.monthpicker('setValue', settings);
-                    });
+                    $this.bind('monthpicker-change-year', _changeMonthPckerYear);
 
                     // hide widget when user clicks elsewhere on page
                     $this.addClass("mtz-monthpicker-widgetcontainer");
-                    $(document).unbind("mousedown.mtzmonthpicker").bind("mousedown.mtzmonthpicker", function (e) {
-                        if (!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0) {
-                            $(".mtz-monthpicker-widgetcontainer").each(function () {
-                                if (typeof($(this).data("monthpicker"))!="undefined") {
-                                    $(this).monthpicker('hide');
-                                }
-                            });
-                        }
-                    });
+                    $(document).unbind("mousedown.mtzmonthpicker").bind("mousedown.mtzmonthpicker", _blurMonthPicker);
                 }
 
             });
@@ -150,6 +160,9 @@
         },
 
         setValue: function (settings) {
+            // If settings are undefined use this object's monthpicker settings.
+            settings = (settings !== undefined) ? settings : $(this).data().monthpicker.settings;
+
             var
                 // If no month name is present, get it from the existing month.
                 month = settings.selectedMonth,
@@ -209,8 +222,13 @@
                 option = null,
                 attrSelectedYear = $(this).data('selected-year'),
                 attrStartYear = $(this).data('start-year'),
-                attrFinalYear = $(this).data('final-year');
+                attrEndYear = $(this).data('end-year'),
+                attrStartMonth = $(this).data('start-month'),
+                attrEndMonth = $(this).data('end-month'),
+                attrSelectedMonth = $(this).data('selected-month');
 
+            // Populate settings with the values in the data attributes
+            // if they exist for the month and year of the monthpicker.
             if (attrSelectedYear) {
                 settings.selectedYear = attrSelectedYear;
             }
@@ -219,8 +237,20 @@
                 settings.startYear = attrStartYear;
             }
 
-            if (attrFinalYear) {
-                settings.finalYear = attrFinalYear;
+            if (attrEndYear) {
+                settings.endYear = attrEndYear;
+            }
+
+            if (attrStartMonth) {
+                settings.startMonth = attrStartMonth;
+            }
+
+            if (attrEndMonth) {
+                settings.endMonth = attrEndMonth;
+            }
+
+            if (attrSelectedMonth) {
+                settings.selectedMonth = attrSelectedMonth;
             }
 
             container.css({
@@ -236,7 +266,7 @@
             });
 
             // mount years combo
-            for (var i = settings.startYear; i <= settings.finalYear; i++) {
+            for (var i = settings.startYear; i <= settings.endYear; i++) {
                 option = $('<option class="mtz-monthpicker" />').attr('value', i).append(i);
                 if (settings.selectedYear === i) {
                     option.attr('selected', 'selected');
@@ -292,8 +322,9 @@
 
         destroy: function () {
             return this.each(function () {
-                // TODO: look for other things to remove
-                $(this).removeData('monthpicker');
+                // First remove the events we added
+                $(this).unbind('focus', _showMonthPicker);  // Removes event from object monthpicker was added to.
+                $(this).removeData('monthpicker'); // Removes all the individual evetns of the monthpicker itself.
             });
         }
 
