@@ -62,7 +62,6 @@
         },
 
         _changeMonthPickerYear = function() {
-            $(this).monthpicker('setValue');
             // When a new value is set we need to disable invalid months.
             $(this).monthpicker('disableMonths');
         },
