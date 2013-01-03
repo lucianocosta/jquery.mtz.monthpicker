@@ -58,10 +58,13 @@
     var _clickMonthPicker =  function() {
             $(this).monthpicker('setValue');
             $(this).monthpicker('hide');
+
         },
 
-        _changeMonthPckerYear = function() {
-            $this.monthpicker('setValue');
+        _changeMonthPickerYear = function() {
+            $(this).monthpicker('setValue');
+            // When a new value is set we need to disable invalid months.
+            $(this).monthpicker('disableMonths');
         },
 
         _blurMonthPicker = function (e) {
@@ -76,6 +79,8 @@
 
         _showMonthPicker = function(e) {
             $(this).monthpicker('show');
+            // When a new value is set we need to disable invalid months.
+            $(this).monthpicker('disableMonths');
         };
 
     var methods = {
@@ -88,6 +93,8 @@
                     settings = $.extend({
                         pattern: 'mm/yyyy',
                         selectedMonth: null,
+                        startMonth: 1,
+                        endMonth: 12,
                         selectedMonthName: '',
                         selectedYear: year,
                         startYear: year - 10,
@@ -131,7 +138,7 @@
                     $this.bind('monthpicker-click-month', _clickMonthPicker);
 
                     // Set the year whenever the year is changed.
-                    $this.bind('monthpicker-change-year', _changeMonthPckerYear);
+                    $this.bind('monthpicker-change-year', _changeMonthPickerYear);
 
                     // hide widget when user clicks elsewhere on page
                     $this.addClass("mtz-monthpicker-widgetcontainer");
@@ -168,7 +175,6 @@
                 month = settings.selectedMonth,
                 year = settings.selectedYear,
                 monthName = Boolean(settings.selectedMonthName) ? settings.selectedMonthName : settings.monthNames[month - 1];
-
             // Word format month (i.e. Jan, Feb, etc.)
             if(settings.pattern.indexOf('mmm') >= 0) {
                 month = monthName;
@@ -193,17 +199,47 @@
 
         disableMonths: function (months) {
             var
-                settings = this.data('monthpicker').settings,
-                container = $('#' + settings.id);
+                monthpicker = this.data('monthpicker'),
+                settings = monthpicker.settings,
+                container = $('#' + settings.id),
+                startMonth = settings.startMonth,
+                endMonth = settings.endMonth,
+                startYear = settings.startYear,
+                endYear = settings.endYear,
+                selectedYear = settings.selectedYear;
 
-            settings.disabledMonths = months;
+            if (months) {
+                settings.disabledMonths = months;
+            }
 
+            // This function is used to help reduce the logic needed to make a
+            // month not usable on the monthpicker.
+            var allowMonths = function(comparisonFunction) {
+                container.find('.mtz-monthpicker-month').each(function() {
+                    var month = parseInt($(this).data('month'), 10);
+                    if (comparisonFunction(month)) {
+                        $(this).removeClass('ui-state-disabled');
+                    } else {
+                        $(this).addClass('ui-state-disabled');
+                    }
+                });
+            };
+
+            // Compute months to disable based on these parameters: startYear, endYear,
+            // startMonth, endMonth.
+            if (startYear == endYear) {
+                allowMonths(function(month){return month >= startMonth && month <= endMonth;});
+            } else if (selectedYear == startYear) {
+                allowMonths(function(month){return month >= startMonth;});
+            } else if (selectedYear == endYear) {
+                allowMonths(function(month){return month <= endMonth;});
+            }
+
+            // Need to disable all months that are in settings.disabledMonths
             container.find('.mtz-monthpicker-month').each(function () {
-                var m = parseInt($(this).data('month'), 10);
-                if ($.inArray(m, months) >= 0) {
+                var month = parseInt($(this).data('month'), 10);
+                if ($.inArray(month, settings.disabledMonths) >= 0) {
                     $(this).addClass('ui-state-disabled');
-                } else {
-                    $(this).removeClass('ui-state-disabled');
                 }
             });
         },
@@ -288,9 +324,9 @@
 
             table.append(tbody).appendTo(container);
 
-            container.find('.mtz-monthpicker-month').bind('click', function () {
+            container.find('.mtz-monthpicker-month').bind('click', function() {
                 var m = parseInt($(this).data('month'), 10);
-                if ($.inArray(m, settings.disabledMonths) < 0 ) {
+                if (!$(this).hasClass('ui-state-disabled')) {
                     settings.selectedMonth = $(this).data('month');
                     settings.selectedMonthName = $(this).text();
                     monthpicker.trigger('monthpicker-click-month', $(this).data('month'));
@@ -305,16 +341,6 @@
             container.find('.mtz-monthpicker-year').bind('change', function () {
                 settings.selectedYear = $(this).val();
                 monthpicker.trigger('monthpicker-change-year', $(this).val());
-            });
-
-            // Disable all disabledMonths on creation.
-            container.find('.mtz-monthpicker-month').each(function () {
-                var m = parseInt($(this).data('month'), 10);
-                if ($.inArray(m, settings.disabledMonths) >= 0) {
-                    $(this).addClass('ui-state-disabled');
-                } else {
-                    $(this).removeClass('ui-state-disabled');
-                }
             });
 
             container.appendTo('body');
