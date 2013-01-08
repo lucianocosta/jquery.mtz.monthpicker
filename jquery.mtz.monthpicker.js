@@ -224,6 +224,18 @@
                 });
             };
 
+            // Do not allow a selctedYear to be greater than or less than the
+            // ranges specified
+            if (selectedYear > endYear) {
+                selectedYear = endYear;
+                settings.selectedYear = endYear;
+            }
+
+            if (selectedYear < startYear) {
+                selectedYear = startYear;
+                settings.selctedYear = startYear;
+            }
+
             // Compute months to disable based on these parameters: startYear, endYear,
             // startMonth, endMonth.
             if (startYear == endYear) {
