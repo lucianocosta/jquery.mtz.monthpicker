@@ -113,7 +113,7 @@
 
         show: function (n) {
             var widget = $('#' + this.data('monthpicker').settings.id);
-            var monthpicker = $('#' + this.data('monthpicker').target.attr("id") + ':eq(0)');
+            var monthpicker = this;
             widget.css("top", monthpicker.offset().top  + monthpicker.outerHeight());
             widget.css("left", monthpicker.offset().left);
             widget.show();
