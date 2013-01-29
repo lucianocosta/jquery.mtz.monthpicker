@@ -115,7 +115,13 @@
             var widget = $('#' + this.data('monthpicker').settings.id);
             var monthpicker = $('#' + this.data('monthpicker').target.attr("id") + ':eq(0)');
             widget.css("top", monthpicker.offset().top  + monthpicker.outerHeight());
-            widget.css("left", monthpicker.offset().left);
+            if ($(window).width() > (widget.width() + monthpicker.offset().left) ){
+                widget.css("left", monthpicker.offset().left);
+            }
+            else{
+                widget.css("left", monthpicker.offset().left - widget.width());
+            }
+            
             widget.show();
             widget.find('select').focus();
             this.trigger('monthpicker-show');
