@@ -1,8 +1,4 @@
 /*
- * ACTIVE PULL REQUESTS HERE:
- * https://github.com/lucianocosta/jquery.mtz.monthpicker/pull/22
- * https://github.com/lucianocosta/jquery.mtz.monthpicker/pull/23  (contains pull 22 as well)
- *
  * jQuery UI Monthpicker
  *
  * @licensed MIT <see below>
