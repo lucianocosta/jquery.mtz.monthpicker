@@ -1,4 +1,8 @@
 /*
+ * ACTIVE PULL REQUESTS HERE:
+ * https://github.com/lucianocosta/jquery.mtz.monthpicker/pull/22
+ * https://github.com/lucianocosta/jquery.mtz.monthpicker/pull/23  (contains pull 22 as well)
+ *
  * jQuery UI Monthpicker
  *
  * @licensed MIT <see below>
@@ -148,6 +152,10 @@
         },
 
         show: function (n) {
+            // Close all other monthpickers, this mimics JQuery's datepicker
+            $('[id^=monthpicker]').hide();
+
+            // Show our current monthpicker
             var widget = $('#' + this.data('monthpicker').settings.id);
             var monthpicker = $('#' + this.data('monthpicker').target.attr("id") + ':eq(0)');
             widget.css("top", monthpicker.offset().top  + monthpicker.outerHeight());
@@ -220,6 +228,7 @@
                         $(this).removeClass('ui-state-disabled');
                     } else {
                         $(this).addClass('ui-state-disabled');
+                        $(this).removeClass('mtz-monthpicker-month-selected');
                     }
                 });
             };
@@ -244,6 +253,8 @@
                 allowMonths(function(month){return month >= startMonth;});
             } else if (selectedYear == endYear) {
                 allowMonths(function(month){return month <= endMonth;});
+            } else {
+                allowMonths(function(month){return true;});
             }
 
             // Need to disable all months that are in settings.disabledMonths
@@ -251,6 +262,7 @@
                 var month = parseInt($(this).data('month'), 10);
                 if ($.inArray(month, settings.disabledMonths) >= 0) {
                     $(this).addClass('ui-state-disabled');
+                    $(this).removeClass('mtz-monthpicker-month-selected');
                 }
             });
         },
