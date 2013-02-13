@@ -149,6 +149,8 @@
             } else {
                 this.val(year + settings.dateSeparator + month);
             }
+            
+            this.change();
         },
 
         disableMonths: function (months) {
