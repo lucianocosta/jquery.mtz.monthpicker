@@ -266,7 +266,7 @@
         destroy: function () {
             return this.each(function () {
                 // TODO: look for other things to remove
-                $(this).removeData('monthpicker');
+                $(this).removeClass('mtz-monthpicker-widgetcontainer').unbind('focus').removeData('monthpicker');
             });
         }
 
