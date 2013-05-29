@@ -100,11 +100,7 @@
                     $this.addClass("mtz-monthpicker-widgetcontainer");
                     $(document).unbind("mousedown.mtzmonthpicker").bind("mousedown.mtzmonthpicker", function (e) {
                         if (!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0) {
-                            $(".mtz-monthpicker-widgetcontainer").each(function () {
-                                if (typeof($(this).data("monthpicker"))!="undefined") { 
-                                    $(this).monthpicker('hide'); 
-                                }
-                            });
+                            $(this).monthpicker('hideAll'); 
                         }
                     });
                 }
@@ -113,6 +109,7 @@
         },
 
         show: function (n) {
+            $(this).monthpicker('hideAll'); 
             var widget = $('#' + this.data('monthpicker').settings.id);
             widget.css("top", this.offset().top  + this.outerHeight());
             widget.css("left", this.offset().left);
@@ -127,6 +124,14 @@
                 widget.hide();
                 this.trigger('monthpicker-hide');
             }
+        },
+
+        hideAll: function () {
+            $(".mtz-monthpicker-widgetcontainer").each(function () {
+                if (typeof($(this).data("monthpicker"))!="undefined") { 
+                    $(this).monthpicker('hide'); 
+                }
+            });
         },
 
         setValue: function (settings) {
