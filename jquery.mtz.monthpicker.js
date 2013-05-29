@@ -77,6 +77,11 @@
 
                 // If the plugin hasn't been initialized yet for this element
                 if (!data) {
+
+                    if (!$(this).attr('id')) {
+                       $(this).attr('id', 'el_' + settings.id);
+                    }
+                    
                     $(this).data('monthpicker', {
                         'target': $this,
                         'settings': settings
