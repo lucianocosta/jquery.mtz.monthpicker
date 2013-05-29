@@ -100,11 +100,7 @@
                     $this.addClass("mtz-monthpicker-widgetcontainer");
                     $(document).unbind("mousedown.mtzmonthpicker").bind("mousedown.mtzmonthpicker", function (e) {
                         if (!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0) {
-                            $(".mtz-monthpicker-widgetcontainer").each(function () {
-                                if (typeof($(this).data("monthpicker"))!="undefined") { 
-                                    $(this).monthpicker('hide'); 
-                                }
-                            });
+                            $(this).monthpicker('hideAll'); 
                         }
                     });
                 }
@@ -113,9 +109,14 @@
         },
 
         show: function (n) {
+            $(this).monthpicker('hideAll'); 
             var widget = $('#' + this.data('monthpicker').settings.id);
             widget.css("top", this.offset().top  + this.outerHeight());
-            widget.css("left", this.offset().left);
+            if ($(window).width() > (widget.width() + monthpicker.offset().left) ){
+                widget.css("left", monthpicker.offset().left);
+            } else {
+                widget.css("left", monthpicker.offset().left - widget.width());
+            }
             widget.show();
             widget.find('select').focus();
             this.trigger('monthpicker-show');
@@ -127,6 +128,14 @@
                 widget.hide();
                 this.trigger('monthpicker-hide');
             }
+        },
+
+        hideAll: function () {
+            $(".mtz-monthpicker-widgetcontainer").each(function () {
+                if (typeof($(this).data("monthpicker"))!="undefined") { 
+                    $(this).monthpicker('hide'); 
+                }
+            });
         },
 
         setValue: function (settings) {
@@ -257,7 +266,7 @@
         destroy: function () {
             return this.each(function () {
                 // TODO: look for other things to remove
-                $(this).removeData('monthpicker');
+                $(this).removeClass('mtz-monthpicker-widgetcontainer').unbind('focus').removeData('monthpicker');
             });
         }
 
