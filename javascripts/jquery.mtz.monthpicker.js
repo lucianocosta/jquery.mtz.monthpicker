@@ -77,6 +77,7 @@
 
                 // If the plugin hasn't been initialized yet for this element
                 if (!data) {
+
                     $(this).data('monthpicker', {
                         'target': $this,
                         'settings': settings
@@ -113,9 +114,8 @@
 
         show: function (n) {
             var widget = $('#' + this.data('monthpicker').settings.id);
-            var monthpicker = $('#' + this.data('monthpicker').target.attr("id") + ':eq(0)');
-            widget.css("top", monthpicker.offset().top  + monthpicker.outerHeight());
-            widget.css("left", monthpicker.offset().left);
+            widget.css("top", this.offset().top  + this.outerHeight());
+            widget.css("left", this.offset().left);
             widget.show();
             widget.find('select').focus();
             this.trigger('monthpicker-show');
@@ -223,6 +223,9 @@
             // mount months table
             for (var i=1; i<=12; i++) {
                 td = $('<td class="ui-state-default mtz-monthpicker mtz-monthpicker-month" style="padding:5px;cursor:default;" />').attr('data-month',i);
+                if (settings.selectedMonth === i) {
+                   td.addClass('ui-state-active');
+                }
                 td.append(settings.monthNames[i-1]);
                 tr.append(td).appendTo(tbody);
                 if (i % 3 === 0) {
@@ -238,6 +241,8 @@
                     settings.selectedMonth = $(this).data('month');
                     settings.selectedMonthName = $(this).text();
                     monthpicker.trigger('monthpicker-click-month', $(this).data('month'));
+                    $('.mtz-monthpicker-month.ui-state-active').toggleClass('ui-state-active');
+                    $(this).toggleClass('ui-state-active');
                 }
             });
 
