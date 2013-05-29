@@ -78,10 +78,6 @@
                 // If the plugin hasn't been initialized yet for this element
                 if (!data) {
 
-                    if (!$(this).attr('id')) {
-                       $(this).attr('id', 'el_' + settings.id);
-                    }
-                    
                     $(this).data('monthpicker', {
                         'target': $this,
                         'settings': settings
@@ -118,9 +114,8 @@
 
         show: function (n) {
             var widget = $('#' + this.data('monthpicker').settings.id);
-            var monthpicker = $('#' + this.data('monthpicker').target.attr("id") + ':eq(0)');
-            widget.css("top", monthpicker.offset().top  + monthpicker.outerHeight());
-            widget.css("left", monthpicker.offset().left);
+            widget.css("top", this.offset().top  + this.outerHeight());
+            widget.css("left", this.offset().left);
             widget.show();
             widget.find('select').focus();
             this.trigger('monthpicker-show');
