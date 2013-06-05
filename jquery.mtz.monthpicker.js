@@ -89,6 +89,40 @@
                         });
                     }
 
+                    // get selectedMonth and selectedYear from value attribute
+                    if ($this.val() != '') {
+                        var pattern = settings.pattern.replace('mmm', 'xxx'); // TODO: setting by month name not supported yet
+                        pattern = pattern.replace('mm', '(\\d{2})');
+                        pattern = pattern.replace('m', '(\\d{1,2})');
+                        pattern = pattern.replace('yyyy', '(\\d{4})');
+                        pattern = pattern.replace('yy', '(\\d{2})');
+                        var regexp = new RegExp(pattern);
+                        var matches = regexp.exec($this.val());
+                        if (matches.length > 2) {
+                            var month, year1;
+                            if (settings.pattern.indexOf('y') > settings.pattern.indexOf('m')) {
+                                month = matches[1];
+                                year1 = matches[2];
+                            } else {
+                                month = matches[2];
+                                year1 = matches[1];
+                            }
+                            month = parseInt(month.replace(/^0/, ''));
+                            year1 = parseInt(year1);
+                            if (year1 < 50) {
+                                year1 += 2000;
+                            } else if (year1 < 100) {
+                                year1 += 1900;
+                            }
+                            if (year1 >= settings.startYear && year1 <= settings.finalYear) {
+                                settings.selectedYear = year1;
+                            }
+                            if (month >= 1 && month <= 12) {
+                                settings.selectedMonth = month;
+                            }
+                        }
+                    }
+
                     $this.monthpicker('mountWidget', settings);
 
                     $this.bind('monthpicker-click-month', function (e, month, year) {
