@@ -268,6 +268,15 @@
                 // TODO: look for other things to remove
                 $(this).removeClass('mtz-monthpicker-widgetcontainer').unbind('focus').removeData('monthpicker');
             });
+        },
+
+        getDate: function () {
+            var settings = this.data('monthpicker').settings;
+            if (settings.selectedMonth && settings.selectedYear) {
+                return new Date(settings.selectedYear, settings.selectedMonth -1);
+            } else {
+                return null;
+            }
         }
 
     };
