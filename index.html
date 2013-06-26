@@ -1,0 +1,254 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Monthpicker is a calendar widget for jQuery that allows you to pick just month and year. It's awesome! =)" />
+    <meta name="google" value="notranslate" />
+    <title>Monthpicker, the missing jQuery widget.</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script> 
+    <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js'></script>
+    <script type="text/javascript" src="javascripts/jquery.mtz.monthpicker.js"></script>
+    <link rel='stylesheet' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/base/jquery-ui.css'>
+    <style type="text/css">
+      td.mtz-monthpicker-month {
+        text-align:center;
+      }
+      select.mtz-monthpicker:focus {
+        outline: none;
+      }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>jQuery.mtz.monthpicker</h1>
+        <p>Monthpicker, the missing jQuery widget.</p>
+        <p class="view"><a href="https://github.com/lucianocosta/jquery.mtz.monthpicker">View the Project on GitHub <small>lucianocosta/jquery.mtz.monthpicker</small></a></p>
+        <ul>
+          <li><a href="https://github.com/lucianocosta/jquery.mtz.monthpicker/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/lucianocosta/jquery.mtz.monthpicker/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/lucianocosta/jquery.mtz.monthpicker">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h4>Monthpicker is a jQuery calendar widget that allows you to pick just month and year.</h4>
+        <p>See it: <input type="text" id="default_widget" > <small>( click on the input )</small></p>
+        <pre><code>$('#default_widget').monthpicker();</code></pre>
+        <br />
+        <h3>Configuration</h3>
+        <p>By default, the year range starts 10 years ago and ends on 10 years from now, having the current year selected.</p>
+        <p>This and other settings can be overwritten on widget initialization:</p>
+
+<pre><code>options = {
+    pattern: 'yyyy-mm', // Default is 'mm/yyyy' and separator char is not mandatory
+    selectedYear: 2010,
+    startYear: 2008,
+    finalYear: 2012,
+    monthNames: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+};
+
+$('#custom_widget').monthpicker(options);
+</code></pre>
+
+        <p>Options above applied: <input type="text" id="custom_widget" ></p>
+        <p>It's also ok to use a pattern of 2 digits for year and/or 1 for month. To use month name instead of its number, use 'mmm'.</p>
+
+        <p>
+          <div>
+            <small style='background-color:orange; color:white; padding:3px;'>NEW !</small>
+            You can override initial settings by setting some data-attributes on your inputs:
+            <ul>
+              <li>data-start-year</li>
+              <li>data-final-year</li>
+              <li>data-selected-year</li>
+            </ul>
+          </div>
+        </p>
+
+<pre><code>
+&lt;input class="monthpicker" data-start-year="2009" data-final-year="2011" data-selected-year="2010"&gt;
+
+$('.monthpicker').monthpicker();
+</code></pre>
+
+        <p>Options above applied: <input id="data_attr_example" class="monthpicker" data-start-year="2009" data-final-year="2011" data-selected-year="2010" ></p>
+
+
+        <br />
+        <h3>Methods</h3>
+        <p>Programmatic interation through these methods:</p>
+
+<pre><code>$('#my_widget').monthpicker('show');
+$('#my_widget').monthpicker('hide');
+$('#my_widget').monthpicker('destroy');
+$('#my_widget').monthpicker('disableMonths', [1, 2, 11, 12]);
+$('#my_widget').monthpicker('disableMonths', []); // re-enables all months
+</code></pre>
+
+        <br />
+        <h3>Events</h3>
+        <p>These are the events triggered by the widget:</p>
+
+        <ul>
+          <li>monthpicker-show</li>
+          <li>monthpicker-hide</li>
+          <li>monthpicker-click-month</li>
+          <li>monthpicker-change-year</li>          
+        </ul>
+
+        <p>Listen to them using jQuery's &nbsp;<code>bind()</code>&nbsp; method:</p>
+
+<pre><code>$('#events_widget').monthpicker();
+
+$('#events_widget').monthpicker().bind('monthpicker-click-month', function (e, month) {
+    alert('You clicked on month ' + month);
+
+}).bind('monthpicker-change-year', function (e, year) {
+    alert('You chosed the year ' + year);
+
+}).bind('monthpicker-show', function () {
+    alert('showing...');
+
+}).bind('monthpicker-hide', function () {
+    alert('hiding...');
+});
+
+// chainability is also ok
+</code></pre>
+
+        <p>Events above applied: <input type="text" id="events_widget" ></p>
+
+        <br />
+        <h3>All toghether</h3>
+        <p>Mixing events and methods you can, for instance, disable some months only for the year(s) you want.</p>
+
+<pre><code>var options = {
+    selectedYear: 2009,
+    startYear: 2008,
+    finalYear: 2010,
+    openOnFocus: false // Let's now use a button to show the widget
+};
+
+$('#last_widget').monthpicker(options);
+
+$('#last_widget').monthpicker().bind('monthpicker-change-year', function (e, year) {
+    $('#last_widget').monthpicker('disableMonths', []); // (re)enables all
+    if (year === '2008') {
+        $('#last_widget').monthpicker('disableMonths', [1, 2, 3, 4]);
+    }
+    if (year === '2010') {
+        $('#last_widget').monthpicker('disableMonths', [9, 10, 11, 12]);
+    }
+});
+
+$('#last_widget_button').bind('click', function () {
+    $('#last_widget').monthpicker('show');
+});
+</code></pre>
+
+        <p>See it: <input type="text" id="last_widget" > <input type="button" value="..." id="last_widget_button"><small> ( click the button )</small></p>
+
+        <br />
+        <h3>Final notes</h3>
+        <p>Monthpicker makes use of the same CSS classes as other jQueryUI widgets do. Thus, if you have a custom theme for jQueryUI, it should looks properly themed too.</p>
+        <p>Even if you create many Monthpicker widgets using CSS class selector, there will be one (and only one) instance for each input matching your selector, so you can still manipulate them isolatedly. <small>( In previous versions, only one instance of Monthpicker widget was created, with all inputs sharing its behavior )</small></p>
+        <p>If you have any issue, please report it on <a href="https://github.com/lucianocosta/jquery.mtz.monthpicker">GitHub</a> issues section.</p>
+        <p>If you don't know what GitHub is all about, get Monthpicker from <a href="https://raw.github.com/lucianocosta/jquery.mtz.monthpicker/master/jquery.mtz.monthpicker.js" target="_blank">this link</a>.</p>
+
+        <br />
+        <h3>Project Goals</h3>
+        <ul>
+          <li>create a widget that I missed on the web</i>
+          <li>keep it as simple as a Monthpicker could be</i>
+          <li>share it</i>
+        </ul>
+
+      </section>
+    </div>
+    <footer>
+      <p>Created and maintained by <a href="http://www.lucianocosta.info">Luciano Costa</a></p>
+      <p>Follow me on Twitter: <a href="http://twitter.com/lscosta">@lscosta</a></p>
+      <br />
+      <br />
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+        <input type="hidden" name="cmd" value="_s-xclick">
+        <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+">
+        <center>
+          <div class="fb-like" data-href="http://www.facebook.com/Monthpicker" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+          <br />
+          <br />
+          <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+          <img alt="" border="0" src="https://www.paypalobjects.com/pt_BR/i/scr/pixel.gif" width="1" height="1">
+        </center>
+      </form>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    <script type="text/javascript">
+      $(function () {
+        $('#default_widget').monthpicker();
+
+        $('.monthpicker').monthpicker();
+
+        $('#custom_widget').monthpicker({
+            pattern: 'yyyy-mm',
+            selectedYear: 2010,
+            startYear: 2008,
+            finalYear: 2012,
+            monthNames: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+        });
+
+        $('#events_widget').monthpicker().bind('monthpicker-click-month', function (e, month) {
+            alert('You clicked on month ' + month);
+
+        }).bind('monthpicker-change-year', function (e, year) {
+            alert('You chosed the year ' + year);
+
+        }).bind('monthpicker-show', function () {
+            alert('showing... ' + $(this).attr('id'));
+            
+        }).bind('monthpicker-hide', function () {
+            alert('hiding... ' + $(this).attr('id'));
+        });
+
+        $('#last_widget').monthpicker({selectedYear: 2009, startYear: 2008, finalYear: 2010, openOnFocus: false});
+
+        $('#last_widget').monthpicker().bind('monthpicker-change-year', function (e, year) {
+            $('#last_widget').monthpicker('disableMonths', []);
+            if (year === '2008') {
+                $('#last_widget').monthpicker('disableMonths', [1, 2, 3, 4]);
+            }
+            if (year === '2010') {
+                $('#last_widget').monthpicker('disableMonths', [9, 10, 11, 12]);
+            }
+        });
+
+        $('#last_widget_button').bind('click', function () {
+            $('#last_widget').monthpicker('show');
+        });
+
+      });
+    </script>
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-24689802-1");
+        pageTracker._trackPageview();
+      } catch (err) {}
+    </script>
+  </body>
+</html>
