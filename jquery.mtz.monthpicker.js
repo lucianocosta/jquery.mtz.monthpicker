@@ -112,10 +112,10 @@
             $(this).monthpicker('hideAll'); 
             var widget = $('#' + this.data('monthpicker').settings.id);
             widget.css("top", this.offset().top  + this.outerHeight());
-            if ($(window).width() > (widget.width() + monthpicker.offset().left) ){
-                widget.css("left", monthpicker.offset().left);
+            if ($(window).width() > (widget.width() + this.offset().left) ){
+                widget.css("left", this.offset().left);
             } else {
-                widget.css("left", monthpicker.offset().left - widget.width());
+                widget.css("left", this.offset().left - widget.width());
             }
             widget.show();
             widget.find('select').focus();
