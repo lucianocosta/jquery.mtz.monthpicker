@@ -107,8 +107,8 @@
                                 month = matches[2];
                                 year1 = matches[1];
                             }
-                            month = parseInt(month.replace(/^0/, ''));
-                            year1 = parseInt(year1);
+                            month = parseInt(month, 10);
+                            year1 = parseInt(year1, 10);
                             if (year1 < 50) {
                                 year1 += 2000;
                             } else if (year1 < 100) {
