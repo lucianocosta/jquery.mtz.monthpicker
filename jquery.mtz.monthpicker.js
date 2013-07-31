@@ -84,21 +84,23 @@
                     });
 
                     if (settings.openOnFocus === true) {
-                        $this.bind('focus', function () {
+                        $this.on('focus', function () {
                             $this.monthpicker('show');
                         });
                     }
 
+                    $this.monthpicker('parseInputValue', settings);
+
                     $this.monthpicker('mountWidget', settings);
 
-                    $this.bind('monthpicker-click-month', function (e, month, year) {
+                    $this.on('monthpicker-click-month', function (e, month, year) {
                         $this.monthpicker('setValue', settings);
                         $this.monthpicker('hide');
                     });
 
                     // hide widget when user clicks elsewhere on page
                     $this.addClass("mtz-monthpicker-widgetcontainer");
-                    $(document).unbind("mousedown.mtzmonthpicker").bind("mousedown.mtzmonthpicker", function (e) {
+                    $(document).unbind("mousedown.mtzmonthpicker").on("mousedown.mtzmonthpicker", function (e) {
                         if (!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0) {
                             $(this).monthpicker('hideAll'); 
                         }
@@ -107,7 +109,7 @@
             });
         },
 
-        show: function (n) {
+        show: function () {
             $(this).monthpicker('hideAll'); 
             var widget = $('#' + this.data('monthpicker').settings.id);
             widget.css("top", this.offset().top  + this.outerHeight());
@@ -183,7 +185,7 @@
                 monthpicker = this,
                 container = $('<div id="'+ settings.id +'" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" />'),
                 header = $('<div class="ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all mtz-monthpicker" />'),
-                combo = $('<select class="mtz-monthpicker mtz-monthpicker-year" />'),
+                combo = $('<select class="mtz-monthpicker mtz-monthpicker-year"" />'),
                 table = $('<table class="mtz-monthpicker" />'),
                 tbody = $('<tbody class="mtz-monthpicker" />'),
                 tr = $('<tr class="mtz-monthpicker" />'),
@@ -218,10 +220,19 @@
                 left: monthpicker.offset().left
             });
 
+            combo.on('change', function () { 
+                var months = $(this).parent().parent().find('td[data-month]');
+                months.removeClass('ui-state-active');
+                if ($(this).val() == settings.selectedYear) {
+                    months.filter('td[data-month='+ settings.selectedMonth +']').addClass('ui-state-active');
+                }
+                monthpicker.trigger('monthpicker-change-year', $(this).val());
+            });
+
             // mount years combo
             for (var i = settings.startYear; i <= settings.finalYear; i++) {
                 var option = $('<option class="mtz-monthpicker" />').attr('value', i).append(i);
-                if (settings.selectedYear === i) {
+                if (settings.selectedYear == i) {
                     option.attr('selected', 'selected');
                 }
                 combo.append(option);
@@ -231,7 +242,7 @@
             // mount months table
             for (var i=1; i<=12; i++) {
                 td = $('<td class="ui-state-default mtz-monthpicker mtz-monthpicker-month" style="padding:5px;cursor:default;" />').attr('data-month',i);
-                if (settings.selectedMonth === i) {
+                if (settings.selectedMonth == i) {
                    td.addClass('ui-state-active');
                 }
                 td.append(settings.monthNames[i-1]);
@@ -241,30 +252,25 @@
                 }
             }
 
-            table.append(tbody).appendTo(container);
-
-            container.find('.mtz-monthpicker-month').bind('click', function () {
+            tbody.find('.mtz-monthpicker-month').on('click', function () {
                 var m = parseInt($(this).data('month'));
                 if ($.inArray(m, settings.disabledMonths) < 0 ) {
+                    settings.selectedYear = $(this).closest('.ui-datepicker').find('.mtz-monthpicker-year').first().val();
                     settings.selectedMonth = $(this).data('month');
                     settings.selectedMonthName = $(this).text();
                     monthpicker.trigger('monthpicker-click-month', $(this).data('month'));
-                    $('.mtz-monthpicker-month.ui-state-active').toggleClass('ui-state-active');
-                    $(this).toggleClass('ui-state-active');
+                    $(this).closest('table').find('.ui-state-active').removeClass('ui-state-active');
+                    $(this).addClass('ui-state-active');
                 }
             });
 
-            container.find('.mtz-monthpicker-year').bind('change', function () {
-                settings.selectedYear = $(this).val();
-                monthpicker.trigger('monthpicker-change-year', $(this).val());
-            });
+            table.append(tbody).appendTo(container);
 
             container.appendTo('body');
         },
 
         destroy: function () {
             return this.each(function () {
-                // TODO: look for other things to remove
                 $(this).removeClass('mtz-monthpicker-widgetcontainer').unbind('focus').removeData('monthpicker');
             });
         },
@@ -275,6 +281,21 @@
                 return new Date(settings.selectedYear, settings.selectedMonth -1);
             } else {
                 return null;
+            }
+        },
+
+        parseInputValue: function (settings) {
+            if (this.val()) {
+                if (settings.dateSeparator) {
+                    var val = this.val().toString().split(settings.dateSeparator);
+                    if (settings.pattern.indexOf('m') === 0) {
+                        settings.selectedMonth = val[0];
+                        settings.selectedYear = val[1];
+                    } else {
+                        settings.selectedMonth = val[1];
+                        settings.selectedYear = val[0];                                
+                    }
+                }
             }
         }
 
