@@ -275,6 +275,7 @@
         },
 
         destroy: function () {
+            $('#' + this.data('monthpicker').settings.id).remove();
             return this.each(function () {
                 $(this).removeClass('mtz-monthpicker-widgetcontainer').unbind('focus').removeData('monthpicker');
             });
