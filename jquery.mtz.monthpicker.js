@@ -59,6 +59,7 @@
                 var 
                     $this = $(this),
                     data = $this.data('monthpicker'),
+                    oldSettings = data ? data.settings : {},
                     year = (options && options.year) ? options.year : (new Date()).getFullYear(),
                     settings = $.extend({
                         pattern: 'mm/yyyy',
@@ -71,45 +72,51 @@
                         id: "monthpicker_" + (Math.random() * Math.random()).toString().replace('.', ''),
                         openOnFocus: true,
                         disabledMonths: []
-                    }, options);
+                    }, oldSettings, options);
 
                 settings.dateSeparator = settings.pattern.replace(/(mmm|mm|m|yyyy|yy|y)/ig,'');
 
-                // If the plugin hasn't been initialized yet for this element
-                if (!data) {
+                // If the plugin has already been initialized for this element
+                if (data) {
+                    $('#' + $this.data('monthpicker').settings.id).remove();
+                }
 
-                    $(this).data('monthpicker', {
-                        'target': $this,
-                        'settings': settings
-                    });
+                $(this).data('monthpicker', {
+                    'target': $this,
+                    'settings': settings
+                });
 
-                    if (settings.openOnFocus === true) {
-                        $this.on('focus', function () {
-                            $this.monthpicker('show');
-                        });
-                    }
-
-                    $this.monthpicker('parseInputValue', settings);
-
-                    $this.monthpicker('mountWidget', settings);
-
-                    $this.on('monthpicker-click-month', function (e, month, year) {
-                        $this.monthpicker('setValue', settings);
-                        $this.monthpicker('hide');
-                    });
-
-                    // hide widget when user clicks elsewhere on page
-                    $this.addClass("mtz-monthpicker-widgetcontainer");
-                    $(document).unbind("mousedown.mtzmonthpicker").on("mousedown.mtzmonthpicker", function (e) {
-                        if (!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0) {
-                            $(this).monthpicker('hideAll'); 
-                        }
+                if (settings.openOnFocus === true) {
+                    $this.on('focus', function () {
+                        $this.monthpicker('show');
                     });
                 }
+
+                $this.monthpicker('parseInputValue', settings);
+
+                $this.monthpicker('mountWidget', settings);
+
+                $this.on('monthpicker-click-month', function (e, month, year) {
+                    $this.monthpicker('setValue', settings);
+                    $this.monthpicker('hide');
+                });
+
+                // hide widget when user clicks elsewhere on page
+                $this.addClass("mtz-monthpicker-widgetcontainer");
+                $(document).unbind("mousedown.mtzmonthpicker").on("mousedown.mtzmonthpicker", function (e) {
+                    if (!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0) {
+                        $(this).monthpicker('hideAll');
+                    }
+                });
             });
         },
 
         show: function () {
+            $('#' + this.data('monthpicker').settings.id).remove();
+            $(this).monthpicker(
+                'mountWidget',
+                $(this).data('monthpicker').settings
+            );
             $(this).monthpicker('hideAll'); 
             var widget = $('#' + this.data('monthpicker').settings.id);
             widget.css("top", this.offset().top  + this.outerHeight());
@@ -270,6 +277,7 @@
         },
 
         destroy: function () {
+            $('#' + this.data('monthpicker').settings.id).remove();
             return this.each(function () {
                 $(this).removeClass('mtz-monthpicker-widgetcontainer').unbind('focus').removeData('monthpicker');
             });
