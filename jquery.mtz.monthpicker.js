@@ -59,6 +59,7 @@
                 var 
                     $this = $(this),
                     data = $this.data('monthpicker'),
+                    oldSettings = data ? data.settings : {},
                     year = (options && options.year) ? options.year : (new Date()).getFullYear(),
                     settings = $.extend({
                         pattern: 'mm/yyyy',
@@ -71,13 +72,13 @@
                         id: "monthpicker_" + (Math.random() * Math.random()).toString().replace('.', ''),
                         openOnFocus: true,
                         disabledMonths: []
-                    }, options);
+                    }, oldSettings, options);
 
                 settings.dateSeparator = settings.pattern.replace(/(mmm|mm|m|yyyy|yy|y)/ig,'');
 
                 // If the plugin has already been initialized for this element
                 if (data) {
-				  $('#' + $this.data('monthpicker').settings.id).remove();
+				    $('#' + $this.data('monthpicker').settings.id).remove();
 				}
 
                 $(this).data('monthpicker', {
