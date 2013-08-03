@@ -78,8 +78,8 @@
 
                 // If the plugin has already been initialized for this element
                 if (data) {
-				    $('#' + $this.data('monthpicker').settings.id).remove();
-				}
+                    $('#' + $this.data('monthpicker').settings.id).remove();
+                }
 
                 $(this).data('monthpicker', {
                     'target': $this,
