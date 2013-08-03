@@ -110,11 +110,15 @@
         },
 
         show: function () {
+
+            // rebuild the ui container to incorporate settings from data attributes that may have been changed
             $('#' + this.data('monthpicker').settings.id).remove();
             $(this).monthpicker(
                 'mountWidget',
                 $(this).data('monthpicker').settings
             );
+
+            // display the ui container
             $(this).monthpicker('hideAll'); 
             var widget = $('#' + this.data('monthpicker').settings.id);
             widget.css("top", this.offset().top  + this.outerHeight());
