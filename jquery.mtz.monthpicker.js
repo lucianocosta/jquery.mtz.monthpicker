@@ -110,6 +110,11 @@
         },
 
         show: function () {
+            $('#' + this.data('monthpicker').settings.id).remove();
+            $(this).monthpicker(
+                'mountWidget',
+                $(this).data('monthpicker').settings
+            );
             $(this).monthpicker('hideAll'); 
             var widget = $('#' + this.data('monthpicker').settings.id);
             widget.css("top", this.offset().top  + this.outerHeight());
