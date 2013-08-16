@@ -256,6 +256,9 @@
                 }
                 td.append(settings.monthNames[i-1]);
                 tr.append(td).appendTo(tbody);
+                if ($.inArray(i, settings.disabledMonths) >= 0) {
+                  td.addClass('ui-state-disabled')
+                }
                 if (i % 3 === 0) {
                     tr = $('<tr class="mtz-monthpicker" />'); 
                 }
