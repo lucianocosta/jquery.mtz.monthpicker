@@ -14,17 +14,17 @@
 /**
  * MIT License
  * Copyright (c) 2011, Luciano Costa
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights 
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
- * copies of the Software, and to permit persons to whom the Software is 
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,27 +36,27 @@
 /**
  * GPL LIcense
  * Copyright (c) 2011, Luciano Costa
- * 
- * This program is free software: you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the 
- * Free Software Foundation, either version 3 of the License, or 
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
- * 
- * You should have received a copy of the GNU General Public License along 
+ *
+ * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 ;(function ($) {
 
     var methods = {
-        init : function (options) { 
+        init : function (options) {
             return this.each(function () {
-                var 
+                var
                     $this = $(this),
                     data = $this.data('monthpicker'),
                     year = (options && options.year) ? options.year : (new Date()).getFullYear(),
@@ -105,7 +105,7 @@
                     $this.addClass("mtz-monthpicker-widgetcontainer");
                     $(document).unbind("mousedown.mtzmonthpicker").on("mousedown.mtzmonthpicker", function (e) {
                         if (!e.target.className || e.target.className.toString().indexOf('mtz-monthpicker') < 0) {
-                            $(this).monthpicker('hideAll'); 
+                            $(this).monthpicker('hideAll');
                         }
                     });
                 }
@@ -113,7 +113,7 @@
         },
 
         show: function () {
-            $(this).monthpicker('hideAll'); 
+            $(this).monthpicker('hideAll');
             var widget = $('#' + this.data('monthpicker').settings.id);
             widget.css("top", this.offset().top  + this.outerHeight());
             if ($(window).width() > (widget.width() + this.offset().left) ){
@@ -136,14 +136,14 @@
 
         hideAll: function () {
             $(".mtz-monthpicker-widgetcontainer").each(function () {
-                if (typeof($(this).data("monthpicker"))!="undefined") { 
-                    $(this).monthpicker('hide'); 
+                if (typeof($(this).data("monthpicker"))!="undefined") {
+                    $(this).monthpicker('hide');
                 }
             });
         },
 
         setValue: function (settings) {
-            var 
+            var
                 month = settings.selectedMonth,
                 year = settings.selectedYear;
 
@@ -155,19 +155,19 @@
 
             if(settings.pattern.indexOf('yyyy') < 0) {
                 year = year.toString().substr(2,2);
-            } 
+            }
 
             if (settings.pattern.indexOf('y') > settings.pattern.indexOf(settings.dateSeparator)) {
                 this.val(month + settings.dateSeparator + year);
             } else {
                 this.val(year + settings.dateSeparator + month);
             }
-            
+
             this.change();
         },
 
         disableMonths: function (months) {
-            var 
+            var
                 settings = this.data('monthpicker').settings,
                 container = $('#' + settings.id);
 
@@ -223,7 +223,7 @@
                 left: monthpicker.offset().left
             });
 
-            combo.on('change', function () { 
+            combo.on('change', function () {
                 var months = $(this).parent().parent().find('td[data-month]');
                 months.removeClass('ui-state-active');
                 if ($(this).val() == settings.selectedYear) {
@@ -251,7 +251,7 @@
                 td.append(settings.monthNames[i-1]);
                 tr.append(td).appendTo(tbody);
                 if (i % 3 === 0) {
-                    tr = $('<tr class="mtz-monthpicker" />'); 
+                    tr = $('<tr class="mtz-monthpicker" />');
                 }
             }
 
@@ -296,7 +296,7 @@
                         settings.selectedYear = val[1];
                     } else {
                         settings.selectedMonth = val[1];
-                        settings.selectedYear = val[0];                                
+                        settings.selectedYear = val[0];
                     }
                 }
             }
@@ -311,7 +311,7 @@
             return methods.init.apply(this, arguments);
         } else {
             $.error('Method ' + method + ' does not exist on jQuery.mtz.monthpicker');
-        }    
+        }
     };
 
 })(jQuery);
