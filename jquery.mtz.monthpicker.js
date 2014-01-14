@@ -87,6 +87,9 @@
                         $this.on('focus', function () {
                             $this.monthpicker('show');
                         });
+                        $this.on('blur', function () {
+                            $this.monthpicker('hide');
+                        });
                     }
 
                     $this.monthpicker('parseInputValue', settings);
