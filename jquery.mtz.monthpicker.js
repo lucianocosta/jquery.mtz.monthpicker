@@ -88,7 +88,9 @@
                             $this.monthpicker('show');
                         });
                         $this.on('blur', function () {
-                            $this.monthpicker('hide');
+                            setTimeout(function(){
+                                $this.monthpicker('hide');
+                            }, 200);
                         });
                     }
 
