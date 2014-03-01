@@ -171,7 +171,7 @@
             settings.disabledMonths = months;
 
             container.find('.mtz-monthpicker-month').each(function () {
-                var m = parseInt($(this).data('month'));
+                var m = parseInt($(this).data('month'), 10);
                 if ($.inArray(m, months) >= 0) {
                     $(this).addClass('ui-state-disabled');
                 } else {
@@ -253,7 +253,7 @@
             }
 
             tbody.find('.mtz-monthpicker-month').on('click', function () {
-                var m = parseInt($(this).data('month'));
+                var m = parseInt($(this).data('month'), 10);
                 if ($.inArray(m, settings.disabledMonths) < 0 ) {
                     settings.selectedYear = $(this).closest('.ui-datepicker').find('.mtz-monthpicker-year').first().val();
                     settings.selectedMonth = $(this).data('month');
@@ -281,6 +281,38 @@
                 return new Date(settings.selectedYear, settings.selectedMonth -1);
             } else {
                 return null;
+            }
+        },
+
+        /**
+         * Sets the selected month and year while preserving all other settings.
+         * @param  {integer} month The one-based month
+         * @param  {integer} year  The full four digit year
+         * @return {void}
+         */
+        setDate: function ( month, year ) {
+            var
+                picker_data = this.data( 'monthpicker' ),
+                displayMonth;
+
+            picker_data.settings.selectedMonthName = picker_data.settings.monthNames[month-1];
+            picker_data.settings.selectedMonth = month;
+            picker_data.settings.selectedYear = year;
+
+            this.data( 'monthpicker', picker_data );
+
+            if(picker_data.settings.pattern.indexOf('mmm') >= 0 ) {
+                displayMonth = picker_data.settings.selectedMonthName;
+            } else if(picker_data.settings.pattern.indexOf('mm') >= 0 && picker_data.settings.selectedMonth < 10) {
+                displayMonth = '0' + month;
+            } else {
+                displayMonth = month;
+            }
+
+            if ( picker_data.settings.pattern.indexOf('y') > picker_data.settings.pattern.indexOf(picker_data.settings.dateSeparator) ) {
+                this.val( displayMonth + picker_data.settings.dateSeparator + year);
+            } else {
+                this.val( year + picker_data.settings.dateSeparator + displayMonth );
             }
         },
 
