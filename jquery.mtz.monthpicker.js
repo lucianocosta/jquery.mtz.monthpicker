@@ -309,6 +309,10 @@
                 displayMonth = month;
             }
 
+            if(picker_data.settings.pattern.indexOf('yyyy') < 0) {
+                year = year.toString().substr(2,2);
+            } 
+
             if ( picker_data.settings.pattern.indexOf('y') > picker_data.settings.pattern.indexOf(picker_data.settings.dateSeparator) ) {
                 this.val( displayMonth + picker_data.settings.dateSeparator + year);
             } else {
