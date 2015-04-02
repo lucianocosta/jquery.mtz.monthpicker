@@ -1,4 +1,4 @@
 Monthpicker
 ===========
 
-View examples and some doc [live](http://lucianocosta.info/jquery.mtz.monthpicker/).
+View examples and some doc [live](http://lucianocosta.github.io/jquery.mtz.monthpicker/).
