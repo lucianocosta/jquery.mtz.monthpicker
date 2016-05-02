@@ -1,0 +1,8 @@
+{
+  "name": "jquery.mtz.monthpicker",
+  "version": "0.1.0",
+  "main": "jquery.mtz.monthpicker.js",
+  "dependencies": {
+    "jquery": ">=1.8"
+  }
+}
