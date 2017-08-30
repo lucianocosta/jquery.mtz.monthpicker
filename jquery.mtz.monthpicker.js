@@ -5,7 +5,7 @@
  * @licensed GPL <see below>
  *
  * @author Luciano Costa
- * http://lucianocosta.info/jquery.mtz.monthpicker/
+ * http://lucianocosta.com.br/jquery.mtz.monthpicker/
  *
  * Depends:
  *  jquery.ui.core.js
