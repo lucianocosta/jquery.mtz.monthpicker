@@ -186,6 +186,7 @@
                 container = $('<div id="'+ settings.id +'" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" />'),
                 header = $('<div class="ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all mtz-monthpicker" />'),
                 combo = $('<select class="mtz-monthpicker mtz-monthpicker-year" />'),
+                clear = $('<button class="mtz-monthpicker-clear">x</button>'),
                 table = $('<table class="mtz-monthpicker" />'),
                 tbody = $('<tbody class="mtz-monthpicker" />'),
                 tr = $('<tr class="mtz-monthpicker" />'),
@@ -229,6 +230,10 @@
                 monthpicker.trigger('monthpicker-change-year', $(this).val());
             });
 
+            clear.on('click', function () {
+                monthpicker.val('');
+            });
+
             // mount years combo
             for (var i = settings.startYear; i <= settings.finalYear; i++) {
                 var option = $('<option class="mtz-monthpicker" />').attr('value', i).append(i);
@@ -237,7 +242,7 @@
                 }
                 combo.append(option);
             }
-            header.append(combo).appendTo(container);
+            header.append(combo).append(clear).appendTo(container);
 
             // mount months table
             for (var i=1; i<=12; i++) {
