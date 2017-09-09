@@ -70,7 +70,9 @@
                         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                         id: "monthpicker_" + (Math.random() * Math.random()).toString().replace('.', ''),
                         openOnFocus: true,
-                        disabledMonths: []
+                        disabledMonths: [],
+                        yearOrderAsc: true,
+                        prevNextButtons: false
                     }, options);
 
                 settings.dateSeparator = settings.pattern.replace(/(mmm|mm|m|yyyy|yy|y)/ig,'');
@@ -185,6 +187,10 @@
                 monthpicker = this,
                 container = $('<div id="'+ settings.id +'" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" />'),
                 header = $('<div class="ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all mtz-monthpicker" />'),
+                prev = $('<a class="mtz-monthpicker ui-datepicker-prev ui-corner-all picker-prev" title="Prev" />'),
+                prevIcon = $('<span class="mtz-monthpicker ui-icon ui-icon-circle-triangle-w picker-prev" title="Prev" />'),
+                next = $('<a class="mtz-monthpicker ui-datepicker-next ui-corner-all picker-next" title="Next" />'),
+                nextIcon = $('<span class="mtz-monthpicker ui-icon ui-icon-circle-triangle-e picker-next" title="Next" />'),
                 combo = $('<select class="mtz-monthpicker mtz-monthpicker-year" />'),
                 table = $('<table class="mtz-monthpicker" />'),
                 tbody = $('<tbody class="mtz-monthpicker" />'),
@@ -229,13 +235,31 @@
                 monthpicker.trigger('monthpicker-change-year', $(this).val());
             });
 
+            if (settings.prevNextButtons) {
+                prev.append(prevIcon).appendTo(header);
+                next.append(nextIcon).appendTo(header);
+
+                prev.on('click', function () {
+                    newYear = (combo.val() == settings.startYear) ? combo.val() : parseInt(combo.val()) - 1;
+                    combo.val(newYear);
+                });
+
+                next.on('click', function () {
+                    newYear = (combo.val() == settings.finalYear) ? combo.val() : parseInt(combo.val()) + 1;
+                    combo.val(newYear);
+                });
+            }
             // mount years combo
             for (var i = settings.startYear; i <= settings.finalYear; i++) {
                 var option = $('<option class="mtz-monthpicker" />').attr('value', i).append(i);
                 if (settings.selectedYear == i) {
                     option.attr('selected', 'selected');
                 }
-                combo.append(option);
+                if (settings.yearOrderAsc === true) {
+                    combo.append(option);
+                } else {
+                    combo.prepend(option);
+                }
             }
             header.append(combo).appendTo(container);
 
